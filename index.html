@@ -9,9 +9,9 @@
             --bg: #0f172a;
             --card: #1e293b;
             --card-hover: #334155;
-            --primary: #facc15; /* Amarillo clásico */
+            --primary: #facc15;
             --primary-dark: #ca8a04;
-            --accent: #22c55e; /* Verde Brasil */
+            --accent: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
             --text: #f8fafc;
@@ -40,7 +40,6 @@
             gap: 15px;
             margin-bottom: 10px;
         }
-        /* ESCUDO VECTORIAL JOGO BONITO WALKING F.C. (Estilo Brasil + Muletas X + JB) */
         .club-shield {
             width: 65px;
             height: 75px;
@@ -519,7 +518,6 @@
 
 <div class="container">
 
-    <!-- SECCIÓN 1: BOLSA DE JUGADORES -->
     <div id="sec-bolsa" class="section active">
         <div class="convocatoria-bar">
             <div class="counter-badge">
@@ -547,7 +545,6 @@
         <div id="playersGrid" class="players-grid"></div>
     </div>
 
-    <!-- SECCIÓN 2: PARTIDO DEL FINDE -->
     <div id="sec-partido" class="section">
         <div class="convocatoria-bar">
             <div>
@@ -594,7 +591,6 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 3: RANKING -->
     <div id="sec-ranking" class="section">
         <div style="overflow-x: auto;">
             <table class="stats-table">
@@ -617,7 +613,6 @@
 
 </div>
 
-<!-- MODAL CREAR / EDITAR -->
 <div class="modal-overlay" id="playerModal">
     <div class="modal">
         <h3 id="modalTitle">➕ Fichar Veterano</h3>
@@ -841,7 +836,7 @@
         document.getElementById('playerModal').classList.remove('open');
     }
 
-    // MÉTODO BLINDADO DE GUARDADO: Borra la fila vieja y añade la nueva limpia para evitar que Google Sheets corrompa datos
+    // MÉTODO SEGURO: POST para crear y PATCH con los 8 campos para editar
     async function savePlayerForm() {
         const nameInput = document.getElementById('newPlayerName');
         const levelInput = document.getElementById('newPlayerLevel');
@@ -862,21 +857,20 @@
 
         try {
             if (editingPlayerId) {
-                // Editar: Mantenemos stats anteriores, actualizamos datos y resubimos fila limpia
+                // Editar jugador existente enviando todos sus datos por PATCH
                 const player = players.find(p => p.id === editingPlayerId);
                 player.nombre = nombre;
                 player.nivel = nivel;
                 player.posicion = posicion;
                 player.foto = compressedPhotoBase64 || '';
 
-                await fetch(`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`, { method: 'DELETE' });
-                await fetch(API_URL, {
-                    method: 'POST',
+                await fetch(`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`, {
+                    method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [player] })
+                    body: JSON.stringify({ data: player })
                 });
             } else {
-                // Crear nuevo
+                // Crear nuevo jugador con POST correcto
                 const newPlayer = {
                     id: String(Date.now()),
                     nombre: nombre,
@@ -1036,12 +1030,10 @@
                 if (matchMvpId === p.id) p.mvp += 1;
 
                 btn.innerText = `⏳ Guardando (${i + 1}/${convocated.length})...`;
-                // Recrear fila para evitar borrados
-                await fetch(`${API_URL}/id/${encodeURIComponent(p.id)}`, { method: 'DELETE' });
-                await fetch(API_URL, {
-                    method: 'POST',
+                await fetch(`${API_URL}/id/${encodeURIComponent(p.id)}`, {
+                    method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [p] })
+                    body: JSON.stringify({ data: p })
                 });
             }
 
