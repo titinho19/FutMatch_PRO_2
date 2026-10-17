@@ -1,1081 +1,489 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo Bonito Walking F.C.</title>
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --card-hover: #334155;
-            --primary: #facc15;
-            --primary-dark: #ca8a04;
-            --accent: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --border: #334155;
-        }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            padding-bottom: 60px;
-        }
+<meta charset="UTF-8">
 
-        header {
-            background: linear-gradient(135deg, #166534 0%, #0f172a 100%);
-            padding: 24px 20px;
-            text-align: center;
-            border-bottom: 4px solid var(--primary);
-        }
-        .club-badge-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        .club-shield {
-            width: 65px;
-            height: 75px;
-            background: #22c55e;
-            border: 3px solid #facc15;
-            border-radius: 12px 12px 35px 35px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .club-shield::before, .club-shield::after {
-            content: '';
-            position: absolute;
-            width: 45px;
-            height: 4px;
-            background: #94a3b8;
-            top: 36px;
-        }
-        .club-shield::before { transform: rotate(35deg); }
-        .club-shield::after { transform: rotate(-35deg); }
-        .shield-text {
-            font-size: 1.3rem;
-            font-weight: 900;
-            color: #0f172a;
-            background: #facc15;
-            padding: 2px 8px;
-            border-radius: 6px;
-            z-index: 2;
-            letter-spacing: 1px;
-            border: 1px solid #166534;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        header h1 { font-size: 1.7rem; color: var(--primary); letter-spacing: 0.5px; }
-        header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; font-style: italic; }
+<title>Jogo Bonito Walking F.C.</title>
 
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px 20px;
-            background: #162032;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            border-bottom: 1px solid var(--border);
-        }
-        .tab-btn {
-            background: transparent;
-            color: var(--muted);
-            border: 1px solid transparent;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab-btn.active {
-            background: var(--primary);
-            color: #0f172a;
-            font-weight: 700;
-        }
+<style>
 
-        .container { max-width: 960px; margin: 20px auto; padding: 0 16px; }
-        .section { display: none; }
-        .section.active { display: block; }
+:root{--bg:#0f172a;--card:#1e293b;--card-hover:#334155;--primary:#facc15;--accent:#22c55e;--warning:#f59e0b;--danger:#ef4444;--text:#f8fafc;--muted:#94a3b8;--border:#334155}
 
-        .convocatoria-bar {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 15px 20px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4);
-        }
-        .counter-badge {
-            font-size: 1.05rem;
-            font-weight: 700;
-        }
-        .counter-badge span {
-            background: var(--primary);
-            color: #0f172a;
-            padding: 3px 10px;
-            border-radius: 999px;
-            margin-left: 6px;
-        }
-        .bar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);padding-bottom:60px}
 
-        .btn {
-            background: var(--primary);
-            color: #0f172a;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn:hover { opacity: 0.92; }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { background: #475569 !important; color: #cbd5e1 !important; cursor: not-allowed; }
-        .btn-secondary { background: var(--accent); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .btn-warning { background: var(--warning); color: #451a03; }
-        .btn-danger { background: var(--danger); color: white; }
+header{background:linear-gradient(135deg,#166534 0%,#0f172a 100%);padding:24px 20px;text-align:center;border-bottom:4px solid var(--primary)}
 
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-        .toolbar input, .toolbar select {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 10px 14px;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 150px;
-        }
+.club-badge-container{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:10px}.club-shield{width:65px;height:75px;background:#22c55e;border:3px solid #facc15;border-radius:12px 12px 35px 35px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;box-shadow:0 4px 10px #0008}
 
-        .players-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-            gap: 16px;
-        }
-        .player-card {
-            background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        .player-card:hover { border-color: #64748b; transform: translateY(-2px); }
-        .player-card.selected {
-            border-color: var(--primary);
-            background: linear-gradient(160deg, #14532d 0%, #0f172a 100%);
-            box-shadow: 0 0 18px rgba(250, 204, 21, 0.25);
-        }
-        .card-top {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 6px;
-        }
-        .rating-badge {
-            background: var(--primary);
-            color: #0f172a;
-            font-weight: 900;
-            font-size: 1.2rem;
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .pos-badge {
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 6px;
-            background: #334155;
-            color: var(--text);
-        }
-        .pos-POR { background: #eab308; color: #422006; }
-        .pos-DEF { background: #3b82f6; color: white; }
-        .pos-MED { background: #22c55e; color: #052e16; }
-        .pos-DEL { background: #ef4444; color: white; }
+.club-shield:before,.club-shield:after{content:'';position:absolute;width:45px;height:4px;background:#94a3b8;top:36px}.club-shield:before{transform:rotate(35deg)}.club-shield:after{transform:rotate(-35deg)}
 
-        .avatar-wrapper {
-            width: 82px;
-            height: 82px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid var(--border);
-            margin-bottom: 10px;
-            background: #0f172a;
-        }
-        .player-card.selected .avatar-wrapper { border-color: var(--primary); }
-        .avatar-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .player-name {
-            font-weight: 700;
-            font-size: 1.05rem;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-        }
-        .player-mini-stats {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 8px;
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-        .player-mini-stats div strong {
-            display: block;
-            color: var(--text);
-            font-size: 0.9rem;
-        }
-        .check-indicator {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--primary);
-            color: #0f172a;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            font-weight: 900;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-        }
-        .player-card.selected .check-indicator { display: flex; }
+.shield-text{font-size:1.3rem;font-weight:900;color:#0f172a;background:#facc15;padding:2px 8px;border-radius:6px;z-index:2;letter-spacing:1px;border:1px solid #166534}
 
-        .card-footer-actions {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-        }
-        .card-action-btn {
-            flex: 1;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid transparent;
-            color: var(--muted);
-            font-size: 0.75rem;
-            padding: 6px 4px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.15s;
-        }
-        .card-action-btn.edit:hover { background: var(--accent); color: white; }
-        .card-action-btn.delete:hover { background: var(--danger); color: white; }
+header h1{font-size:1.7rem;color:var(--primary);letter-spacing:.5px}header p{color:var(--muted);font-size:.85rem;margin-top:4px;font-style:italic}
 
-        .scoreboard {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 18px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 28px;
-            text-align: center;
-        }
-        .score-team { font-weight: 800; font-size: 1.1rem; }
-        .score-numbers {
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: #090e1a;
-            padding: 6px 22px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            letter-spacing: 4px;
-            color: var(--primary);
-        }
+.tabs{display:flex;justify-content:center;gap:10px;padding:15px 20px;background:#162032;position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);flex-wrap:wrap}
 
-        .teams-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .team-box {
-            background: var(--card);
-            border-radius: 14px;
-            padding: 20px;
-            border-top: 5px solid var(--danger);
-        }
-        .team-box.team-b { border-top-color: var(--accent); }
-        .team-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-        .team-player-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 10px;
-            margin-bottom: 8px;
-            gap: 8px;
-        }
-        .team-player-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-        }
-        .team-player-info img {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-        .post-match-actions {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-shrink: 0;
-        }
-        .goal-control {
-            display: inline-flex;
-            align-items: center;
-            background: #0f172a;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .goal-control button {
-            background: transparent;
-            color: var(--text);
-            border: none;
-            padding: 5px 9px;
-            cursor: pointer;
-            font-weight: 900;
-            font-size: 0.9rem;
-        }
-        .goal-control button:hover { background: var(--card-hover); }
-        .goal-control span {
-            padding: 0 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-        .mvp-btn {
-            padding: 6px 10px;
-            font-size: 0.75rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #0f172a;
-            color: var(--muted);
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.15s;
-        }
-        .mvp-btn.active {
-            background: var(--warning);
-            color: #451a03;
-            border-color: var(--warning);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
-        }
+.tab-btn{background:transparent;color:var(--muted);border:1px solid transparent;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer}.tab-btn.active{background:var(--primary);color:#0f172a;font-weight:700}
 
-        .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .stats-table th, .stats-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        .stats-table th { background: #0f172a; color: var(--muted); font-size: 0.85rem; }
-        .stats-player-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; }
-        .stats-player-cell img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+.container{max-width:960px;margin:20px auto;padding:0 16px}.section{display:none}.section.active{display:block}
 
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.75);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 16px;
-        }
-        .modal-overlay.open { display: flex; }
-        .modal {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            max-width: 420px;
-            width: 100%;
-            padding: 24px;
-        }
-        .modal h3 { margin-bottom: 16px; color: var(--primary); }
-        .form-control { margin-bottom: 14px; }
-        .form-control label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 5px; }
-        .form-control input, .form-control select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #0f172a;
-            color: var(--text);
-        }
-        .preview-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        .preview-box img {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-        }
+.convocatoria-bar{background:var(--card);border:1px solid var(--border);padding:15px 20px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;box-shadow:0 10px 15px -3px #0006}
 
-        .status-msg {
-            text-align: center;
-            padding: 30px;
-            color: var(--muted);
-        }
+.counter-badge{font-size:1.05rem;font-weight:700}.counter-badge span{background:var(--primary);color:#0f172a;padding:3px 10px;border-radius:999px;margin-left:6px}.bar-actions{display:flex;gap:10px;flex-wrap:wrap}
 
-        @media (max-width: 700px) {
-            .teams-grid { grid-template-columns: 1fr; }
-            .convocatoria-bar { flex-direction: column; align-items: stretch; text-align: center; }
-            .bar-actions { justify-content: center; }
-            .scoreboard { gap: 12px; }
-            .score-numbers { font-size: 1.6rem; padding: 6px 14px; }
-        }
-    </style>
+.btn{background:var(--primary);color:#0f172a;border:none;padding:10px 16px;border-radius:8px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .2s;display:inline-flex;align-items:center;gap:6px}.btn:hover{opacity:.92}.btn:active{transform:scale(.98)}.btn:disabled{background:#475569!important;color:#cbd5e1!important;cursor:not-allowed}.btn-secondary{background:var(--accent);color:white}.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-warning{background:var(--warning);color:#451a03}.btn-danger{background:var(--danger);color:white}
+
+.toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}.toolbar input,.toolbar select{background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;flex:1;min-width:150px}
+
+.players-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}.player-card{background:linear-gradient(160deg,#1e293b 0%,#0f172a 100%);border:2px solid var(--border);border-radius:14px;padding:16px;position:relative;cursor:pointer;transition:all .2s;user-select:none;display:flex;flex-direction:column;align-items:center;text-align:center}.player-card:hover{border-color:#64748b;transform:translateY(-2px)}.player-card.selected{border-color:var(--primary);background:linear-gradient(160deg,#14532d 0%,#0f172a 100%);box-shadow:0 0 18px #facc153f}
+
+.card-top{width:100%;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}.rating-badge{background:var(--primary);color:#0f172a;font-weight:900;font-size:1.2rem;width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center}.pos-badge{font-size:.75rem;font-weight:800;padding:4px 8px;border-radius:6px;background:#334155;color:var(--text)}.pos-POR{background:#eab308;color:#422006}.pos-DEF{background:#3b82f6;color:white}.pos-MED{background:#22c55e;color:#052e16}.pos-DEL{background:#ef4444;color:white}
+
+.avatar-wrapper{width:82px;height:82px;border-radius:50%;overflow:hidden;border:3px solid var(--border);margin-bottom:10px;background:#0f172a}.player-card.selected .avatar-wrapper{border-color:var(--primary)}.avatar-wrapper img{width:100%;height:100%;object-fit:cover}.player-name{font-weight:700;font-size:1.05rem;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+
+.player-mini-stats{display:flex;justify-content:space-around;width:100%;border-top:1px solid #ffffff14;padding-top:8px;font-size:.8rem;color:var(--muted)}.player-mini-stats strong{display:block;color:var(--text);font-size:.9rem}
+
+.check-indicator{position:absolute;top:-8px;right:-8px;background:var(--primary);color:#0f172a;width:26px;height:26px;border-radius:50%;font-weight:900;display:none;align-items:center;justify-content:center;box-shadow:0 2px 6px #0006}.player-card.selected .check-indicator{display:flex}
+
+.card-footer-actions{display:flex;gap:8px;width:100%;margin-top:10px;padding-top:8px;border-top:1px solid #ffffff0f}.card-action-btn{flex:1;background:#ffffff0f;border:1px solid transparent;color:var(--muted);font-size:.75rem;padding:6px 4px;border-radius:6px;cursor:pointer;font-weight:600}.card-action-btn.edit:hover{background:var(--accent);color:white}.card-action-btn.delete:hover{background:var(--danger);color:white}
+
+.scoreboard{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;display:flex;justify-content:center;align-items:center;gap:28px;text-align:center}.score-team{font-weight:800;font-size:1.1rem}.score-numbers{font-size:2.2rem;font-weight:900;background:#090e1a;padding:6px 22px;border-radius:12px;border:1px solid var(--border);letter-spacing:4px;color:var(--primary)}
+
+.teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.team-box{background:var(--card);border-radius:14px;padding:20px;border-top:5px solid var(--danger)}.team-box.team-b{border-top-color:var(--accent)}.team-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid var(--border);gap:8px}.team-player-row{display:flex;align-items:center;justify-content:space-between;padding:10px;background:#0f172a99;border-radius:10px;margin-bottom:8px;gap:8px}.team-player-info{display:flex;align-items:center;gap:10px;min-width:0}.team-player-info img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0}.post-match-actions{display:flex;align-items:center;gap:5px;flex-shrink:0}.goal-control{display:inline-flex;align-items:center;background:#0f172a;border:1px solid var(--border);border-radius:8px;overflow:hidden}.goal-control button{background:transparent;color:var(--text);border:none;padding:5px 9px;cursor:pointer;font-weight:900}.goal-control button:hover{background:var(--card-hover)}.goal-control span{padding:0 8px;font-size:.85rem;font-weight:700}.mvp-btn{padding:6px 10px;font-size:.75rem;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:var(--muted);cursor:pointer;font-weight:700}.mvp-btn.active{background:var(--warning);color:#451a03;border-color:var(--warning)}
+
+.stats-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden}.stats-table th,.stats-table td{padding:12px 15px;text-align:left;border-bottom:1px solid var(--border)}.stats-table th{background:#0f172a;color:var(--muted);font-size:.85rem}.stats-player-cell{display:flex;align-items:center;gap:10px;font-weight:600}.stats-player-cell img{width:34px;height:34px;border-radius:50%;object-fit:cover}
+
+.modal-overlay{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:100;padding:16px;overflow:auto}.modal-overlay.open{display:flex}.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;max-width:420px;width:100%;padding:24px;max-height:95vh;overflow:auto}.modal h3{margin-bottom:16px;color:var(--primary)}.form-control{margin-bottom:14px}.form-control label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:5px}.form-control input,.form-control select{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:var(--text)}.preview-box{display:flex;align-items:center;gap:12px;margin-top:8px}.preview-box img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--primary)}
+
+.status-msg{text-align:center;padding:30px;color:var(--muted)}.error-msg{color:#fecaca;background:#7f1d1d55;border:1px solid #ef4444;border-radius:10px;padding:12px;margin-bottom:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+
+@media(max-width:700px){.teams-grid{grid-template-columns:1fr}.convocatoria-bar{flex-direction:column;align-items:stretch;text-align:center}.bar-actions{justify-content:center}.scoreboard{gap:12px}.score-numbers{font-size:1.6rem;padding:6px 14px}.team-player-row{flex-wrap:wrap}.post-match-actions{margin-left:auto}.stats-table th,.stats-table td{padding:9px 10px;font-size:.85rem}}
+
+</style>
+
 </head>
+
 <body>
 
-<header>
-    <div class="club-badge-container">
-        <div class="club-shield">
-            <div class="shield-text">JB</div>
-        </div>
-        <div style="text-align: left;">
-            <h1>Jogo Bonito Walking F.C.</h1>
-            <p>"Aquí se corre poco, pero el balón va limpio (y los meniscos sufren lo justo)"</p>
-        </div>
-    </div>
-</header>
+<header><div class="club-badge-container"><div class="club-shield"><div class="shield-text">JB</div></div><div style="text-align:left"><h1>Jogo Bonito Walking F.C.</h1><p>"Aquí se corre poco, pero el balón va limpio (y los meniscos sufren lo justo)"</p></div></div></header>
 
 <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('bolsa')">📋 Bolsa y Convocatoria</button>
-    <button class="tab-btn" onclick="switchTab('partido')">⚖️ Partido del Finde</button>
-    <button class="tab-btn" onclick="switchTab('ranking')">🏆 Ranking Leyendas</button>
+
+<button class="tab-btn active" data-tab="bolsa" onclick="switchTab('bolsa')">📋 Bolsa y Convocatoria</button>
+
+<button class="tab-btn" data-tab="partido" onclick="switchTab('partido')">⚽ Partido</button>
+
+<button class="tab-btn" data-tab="ranking" onclick="switchTab('ranking')">🏆 Ranking</button>
+
 </div>
 
 <div class="container">
 
-    <div id="sec-bolsa" class="section active">
-        <div class="convocatoria-bar">
-            <div class="counter-badge">
-                Convocados para hoy: <span id="selectedCount">0</span>
-            </div>
-            <div class="bar-actions">
-                <button class="btn btn-outline" onclick="toggleSelectAll()">Seleccionar Todos / Ninguno</button>
-                <button class="btn btn-secondary" onclick="openCreateModal()">+ Nuevo Fichaje</button>
-                <button class="btn" id="btnGenerar" onclick="generateBalancedTeams()">⚖️ Generar Equipos</button>
-            </div>
-        </div>
+<div id="bolsa" class="section active">
 
-        <div class="toolbar">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar veterano..." oninput="renderPlayers()">
-            <select id="filterPos" onchange="renderPlayers()">
-                <option value="ALL">Todas las posiciones</option>
-                <option value="POR">🧤 Porteros (POR)</option>
-                <option value="DEF">🛡️ Defensas (DEF)</option>
-                <option value="MED">🎯 Medios (MED)</option>
-                <option value="DEL">⚡ Delanteros (DEL)</option>
-            </select>
-        </div>
+<div class="convocatoria-bar">
 
-        <div id="loadingState" class="status-msg">🔄 Cargando plantilla desde Google Sheets...</div>
-        <div id="playersGrid" class="players-grid"></div>
-    </div>
+<div class="counter-badge">Veteranos convocados <span id="selectedCount">0</span></div>
 
-    <div id="sec-partido" class="section">
-        <div class="convocatoria-bar">
-            <div>
-                <strong>Acta del Partido de Veteranos</strong>
-                <p style="font-size: 0.85rem; color: var(--muted);">Apunta los goles y el MVP de hoy. Al terminar, guarda el acta.</p>
-            </div>
-            <div class="bar-actions">
-                <button class="btn btn-outline" onclick="shuffleAgain()">🎲 Re-sortear</button>
-                <button class="btn btn-secondary" onclick="copyToWhatsApp()">📲 WhatsApp</button>
-                <button class="btn btn-warning" id="btnRecordMatch" onclick="finishAndSaveMatch()">🏁 Finalizar y Guardar Acta</button>
-            </div>
-        </div>
+<div class="bar-actions">
 
-        <div id="emptyMatchMsg" class="status-msg">
-            Todavía no hay equipos generados. Ve a <strong>Bolsa y Convocatoria</strong> y pulsa "Generar Equipos".
-        </div>
+<button class="btn" onclick="openNewModal()">➕ Nuevo veterano</button>
 
-        <div id="matchActiveContent" style="display: none;">
-            <div class="scoreboard">
-                <div class="score-team" style="color: var(--danger);">🔴 EQUIPO A</div>
-                <div class="score-numbers">
-                    <span id="scoreGoalsA">0</span> - <span id="scoreGoalsB">0</span>
-                </div>
-                <div class="score-team" style="color: var(--accent);">EQUIPO B 🔵</div>
-            </div>
-
-            <div id="teamsContainer" class="teams-grid">
-                <div class="team-box">
-                    <div class="team-header">
-                        <h3 style="color: var(--danger);">🔴 Equipo A</h3>
-                        <span>Media: <strong id="avgTeamA">0.0</strong> | Pts: <span id="sumTeamA">0</span></span>
-                    </div>
-                    <div id="listTeamA"></div>
-                </div>
-
-                <div class="team-box team-b">
-                    <div class="team-header">
-                        <h3 style="color: var(--accent);">🔵 Equipo B</h3>
-                        <span>Media: <strong id="avgTeamB">0.0</strong> | Pts: <span id="sumTeamB">0</span></span>
-                    </div>
-                    <div id="listTeamB"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="sec-ranking" class="section">
-        <div style="overflow-x: auto;">
-            <table class="stats-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Veterano</th>
-                        <th>Pos</th>
-                        <th>Nivel</th>
-                        <th>⚽ Goles</th>
-                        <th>⭐ MVPs</th>
-                        <th>👟 Partidos</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="rankingBody"></tbody>
-            </table>
-        </div>
-    </div>
+<button class="btn btn-secondary" onclick="generateBalancedTeams()">⚖️ Generar equipos</button>
 
 </div>
 
-<div class="modal-overlay" id="playerModal">
-    <div class="modal">
-        <h3 id="modalTitle">➕ Fichar Veterano</h3>
-        <div class="form-control">
-            <label>Nombre o Apodo *</label>
-            <input type="text" id="newPlayerName" placeholder="Ej: Manolo el Lento">
-        </div>
-        <div class="form-control">
-            <label>Nivel (1 a 10) *</label>
-            <input type="number" id="newPlayerLevel" min="1" max="10" value="7">
-        </div>
-        <div class="form-control">
-            <label>Posición Principal</label>
-            <select id="newPlayerPos">
-                <option value="MED">🎯 Centrocampista (MED)</option>
-                <option value="DEF">🛡️ Defensa (DEF)</option>
-                <option value="DEL">⚡ Delantero (DEL)</option>
-                <option value="POR">🧤 Portero (POR)</option>
-            </select>
-        </div>
-        <div class="form-control">
-            <label>Foto (Opcional)</label>
-            <input type="file" id="newPlayerPhoto" accept="image/*" onchange="handlePhotoUpload(event)">
-            <div class="preview-box" id="photoPreviewBox" style="display: none;">
-                <img id="photoPreviewImg" src="" alt="Vista previa">
-                <div style="display:flex; flex-direction:column; gap:4px;">
-                    <span style="font-size: 0.8rem; color: var(--primary);">✓ Foto lista</span>
-                    <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.7rem;" onclick="clearPhoto()">Quitar</button>
-                </div>
-            </div>
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-            <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
-            <button class="btn" id="savePlayerBtn" onclick="savePlayerForm()">Guardar en la Nube</button>
-        </div>
-    </div>
+</div>
+
+<div class="toolbar">
+
+<input id="searchInput" type="search" placeholder="Buscar veterano..." oninput="renderPlayers()">
+
+<select id="positionFilter" onchange="renderPlayers()">
+
+<option value="">Todas las posiciones</option><option value="POR">Portero</option><option value="DEF">Defensa</option><option value="MED">Medio</option><option value="DEL">Delantero</option>
+
+</select>
+
+</div>
+
+<div id="apiError" class="error-msg" style="display:none"></div>
+
+<div id="playersGrid" class="players-grid"><div class="status-msg">Conectando con Google Sheets...</div></div>
+
+</div>
+
+<div id="partido" class="section">
+
+<div id="emptyMatchMsg" class="status-msg">Genera los equipos desde la bolsa de veteranos para preparar el partido.</div>
+
+<div id="matchActiveContent" style="display:none">
+
+<div class="scoreboard">
+
+<div class="score-team">🔴 Equipo A<div style="font-size:.8rem;color:var(--muted)">Nivel total: <span id="sumTeamA">0</span> · Media: <span id="avgTeamA">0</span></div></div>
+
+<div class="score-numbers"><span id="scoreGoalsA">0</span> - <span id="scoreGoalsB">0</span></div>
+
+<div class="score-team">🔵 Equipo B<div style="font-size:.8rem;color:var(--muted)">Nivel total: <span id="sumTeamB">0</span> · Media: <span id="avgTeamB">0</span></div></div>
+
+</div>
+
+<div class="teams-grid">
+
+<div class="team-box"><div class="team-header"><h3>🔴 Equipo A</h3><span id="teamACount">0 jugadores</span></div><div id="listTeamA"></div></div>
+
+<div class="team-box team-b"><div class="team-header"><h3>🔵 Equipo B</h3><span id="teamBCount">0 jugadores</span></div><div id="listTeamB"></div></div>
+
+</div>
+
+<div class="bar-actions" style="margin-top:18px;justify-content:center">
+
+<button class="btn btn-outline" onclick="shuffleAgain()">🔀 Reequilibrar / mezclar</button>
+
+<button id="btnRecordMatch" class="btn btn-warning" onclick="finishAndSaveMatch()">🏁 Finalizar y Guardar Acta</button>
+
+<button class="btn btn-secondary" onclick="copyToWhatsApp()">📲 Copiar convocatoria para WhatsApp</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="ranking" class="section">
+
+<h2 style="margin-bottom:15px">🏆 Ranking de veteranos</h2>
+
+<div style="overflow-x:auto">
+
+<table class="stats-table">
+
+<thead><tr><th>#</th><th>Veterano</th><th>Pos.</th><th>Nivel</th><th>Goles</th><th>MVP</th><th>Partidos</th><th>Acciones</th></tr></thead>
+
+<tbody id="rankingBody"><tr><td colspan="8" class="status-msg">Cargando ranking...</td></tr></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="playerModal" class="modal-overlay">
+
+<div class="modal">
+
+<h3 id="modalTitle">➕ Fichar veterano</h3>
+
+<form id="playerForm" onsubmit="event.preventDefault();savePlayerForm()">
+
+<div class="form-control"><label for="newPlayerName">Nombre</label><input id="newPlayerName" maxlength="80" required placeholder="Nombre del veterano"></div>
+
+<div class="form-control"><label for="newPlayerLevel">Nivel (1-10)</label><input id="newPlayerLevel" type="number" min="1" max="10" step="1" required value="5"></div>
+
+<div class="form-control"><label for="newPlayerPos">Posición</label><select id="newPlayerPos"><option value="POR">Portero</option><option value="DEF">Defensa</option><option value="MED" selected>Medio</option><option value="DEL">Delantero</option></select></div>
+
+<div class="form-control"><label for="newPlayerPhoto">Foto (opcional)</label><input id="newPlayerPhoto" type="file" accept="image/*" capture="environment"><div id="photoPreviewBox" class="preview-box" style="display:none"><img id="photoPreviewImg" alt="Vista previa"><span>Vista previa de la foto</span></div></div>
+
+<div class="bar-actions"><button id="savePlayerBtn" type="submit" class="btn">Guardar en la Nube</button><button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button></div>
+
+</form>
+
+</div>
+
 </div>
 
 <script>
-    const API_URL = 'https://sheetdb.io/api/v1/rx0tzvfprheyf';
 
-    let players = [];
-    let selectedIds = new Set();
-    let currentTeamA = [];
-    let currentTeamB = [];
-    let matchGoals = {};
-    let matchMvpId = null;
-    let matchSaved = false;
+const API_URL='https://sheetdb.io/api/v1/rx0tzvfprheyf';
 
-    let editingPlayerId = null;
-    let compressedPhotoBase64 = '';
+const DEFAULT_AVATAR='https://ui-avatars.com/api/?background=334155&color=fff&name=Jugador';
 
-    window.addEventListener('DOMContentLoaded', fetchPlayers);
+let players=[],selectedIds=new Set(),editingPlayerId=null,compressedPhotoBase64='',currentTeamA=[],currentTeamB=[],matchGoals={},matchMvpId=null,matchSaved=false;
 
-    function switchTab(tab) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+function showApiError(message){const el=document.getElementById('apiError');el.textContent=message;el.style.display='block';}
 
-        if (tab === 'bolsa') {
-            document.getElementById('sec-bolsa').classList.add('active');
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        } else if (tab === 'partido') {
-            document.getElementById('sec-partido').classList.add('active');
-            document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        } else if (tab === 'ranking') {
-            renderRanking();
-            document.getElementById('sec-ranking').classList.add('active');
-            document.querySelectorAll('.tab-btn')[2].classList.add('active');
-        }
-    }
+function clearApiError(){const el=document.getElementById('apiError');el.textContent='';el.style.display='none';}
 
-    function getAvatar(player) {
-        if (player.foto && player.foto.trim() !== '') return player.foto;
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(player.nombre || 'J')}&background=166534&color=facc15&bold=true`;
-    }
+async function apiRequest(url,options={}){
 
-    async function fetchPlayers() {
-        const loading = document.getElementById('loadingState');
-        loading.style.display = 'block';
-        try {
-            const res = await fetch(API_URL);
-            const data = await res.json();
+ const response=await fetch(url,options);
 
-            // Filtramos estrictamente para que solo cargue filas que tengan un nombre válido
-            players = (Array.isArray(data) ? data : [])
-                .filter(p => p.id && p.nombre && String(p.nombre).trim() !== '')
-                .map((p, idx) => ({
-                    id: String(p.id),
-                    nombre: String(p.nombre).trim(),
-                    nivel: Number(p.nivel || 5),
-                    posicion: String(p.posicion || 'MED').toUpperCase(),
-                    foto: p.foto || '',
-                    goles: Number(p.goles || 0),
-                    mvp: Number(p.mvp || 0),
-                    partidos: Number(p.partidos || 0)
-                }));
+ const raw=await response.text();
 
-            loading.style.display = 'none';
-            renderPlayers();
-        } catch (err) {
-            loading.innerHTML = '❌ Error al conectar con Google Sheets.';
-            console.error(err);
-        }
-    }
+ let result={};
 
-    function renderPlayers() {
-        const grid = document.getElementById('playersGrid');
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        const posFilter = document.getElementById('filterPos').value;
+ try{result=raw?JSON.parse(raw):{};}catch{result={message:raw};}
 
-        grid.innerHTML = '';
-        const filtered = players.filter(p => {
-            return p.nombre.toLowerCase().includes(search) && (posFilter === 'ALL' || p.posicion === posFilter);
-        });
+ if(!response.ok)throw new Error(`HTTP ${response.status}: ${JSON.stringify(result)}`);
 
-        filtered.forEach(p => {
-            const isSelected = selectedIds.has(p.id);
-            const card = document.createElement('div');
-            card.className = `player-card ${isSelected ? 'selected' : ''}`;
-            card.onclick = (e) => {
-                if (e.target.closest('.card-action-btn')) return;
-                togglePlayerSelection(p.id);
-            };
+ return result;
 
-            card.innerHTML = `
-                <div class="check-indicator">✓</div>
-                <div class="card-top">
-                    <div class="rating-badge">${p.nivel}</div>
-                    <span class="pos-badge pos-${p.posicion}">${p.posicion}</span>
-                </div>
-                <div class="avatar-wrapper">
-                    <img src="${getAvatar(p)}" alt="${p.nombre}">
-                </div>
-                <div class="player-name" title="${p.nombre}">${p.nombre}</div>
-                <div class="player-mini-stats">
-                    <div><strong>${p.goles}</strong>Goles</div>
-                    <div><strong>${p.mvp}</strong>MVPs</div>
-                    <div><strong>${p.partidos}</strong>PJ</div>
-                </div>
-                <div class="card-footer-actions">
-                    <button class="card-action-btn edit" onclick="openEditModal('${p.id}')">✏️ Editar</button>
-                    <button class="card-action-btn delete" onclick="deletePlayer('${p.id}')">🗑️</button>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-        document.getElementById('selectedCount').innerText = selectedIds.size;
-    }
+}
 
-    function togglePlayerSelection(id) {
-        if (selectedIds.has(id)) selectedIds.delete(id);
-        else selectedIds.add(id);
-        renderPlayers();
-    }
+function normalizePlayer(p){
 
-    function toggleSelectAll() {
-        if (selectedIds.size === players.length) selectedIds.clear();
-        else players.forEach(p => selectedIds.add(p.id));
-        renderPlayers();
-    }
+ const n=(value, fallback=0)=>{const v=Number(value);return Number.isFinite(v)?v:fallback;};
 
-    function handlePhotoUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                canvas.width = 90; canvas.height = 90;
-                const ctx = canvas.getContext('2d');
-                const minSide = Math.min(img.width, img.height);
-                ctx.drawImage(img, (img.width - minSide)/2, (img.height - minSide)/2, minSide, minSide, 0, 0, 90, 90);
-                compressedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
-                document.getElementById('photoPreviewBox').style.display = 'flex';
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
+ return {id:String(p.id??''),nombre:String(p.nombre??''),nivel:n(p.nivel,5),posicion:String(p.posicion||'MED').toUpperCase(),foto:String(p.foto||''),goles:n(p.goles),mvp:n(p.mvp),partidos:n(p.partidos)};
 
-    function clearPhoto() {
-        compressedPhotoBase64 = '';
-        document.getElementById('newPlayerPhoto').value = '';
-        document.getElementById('photoPreviewBox').style.display = 'none';
-    }
+}
 
-    function openCreateModal() {
-        editingPlayerId = null;
-        document.getElementById('modalTitle').innerText = '➕ Fichar Veterano';
-        document.getElementById('newPlayerName').value = '';
-        document.getElementById('newPlayerLevel').value = '7';
-        document.getElementById('newPlayerPos').value = 'MED';
-        document.getElementById('newPlayerPhoto').value = '';
-        document.getElementById('photoPreviewBox').style.display = 'none';
-        compressedPhotoBase64 = '';
-        document.getElementById('playerModal').classList.add('open');
-    }
+async function fetchPlayers(){
 
-    function openEditModal(id) {
-        const player = players.find(p => p.id === id);
-        if (!player) return;
-        editingPlayerId = id;
-        document.getElementById('modalTitle').innerText = `✏️ Editar a ${player.nombre}`;
-        document.getElementById('newPlayerName').value = player.nombre;
-        document.getElementById('newPlayerLevel').value = player.nivel;
-        document.getElementById('newPlayerPos').value = player.posicion || 'MED';
-        document.getElementById('newPlayerPhoto').value = '';
-        compressedPhotoBase64 = player.foto || '';
-        if (compressedPhotoBase64) {
-            document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
-            document.getElementById('photoPreviewBox').style.display = 'flex';
-        } else {
-            document.getElementById('photoPreviewBox').style.display = 'none';
-        }
-        document.getElementById('playerModal').classList.add('open');
-    }
+ try{
 
-    function closeModal() {
-        document.getElementById('playerModal').classList.remove('open');
-    }
+  clearApiError();
 
-    // MÉTODO DE GUARDADO BLINDADO: Para asegurar que se registren todos los campos
-    async function savePlayerForm() {
-        const nameInput = document.getElementById('newPlayerName');
-        const levelInput = document.getElementById('newPlayerLevel');
-        const posInput = document.getElementById('newPlayerPos');
-        const btn = document.getElementById('savePlayerBtn');
+  const data=await apiRequest(API_URL);
 
-        const nombre = nameInput.value.trim();
-        const nivel = Number(levelInput.value);
-        const posicion = posInput.value;
+  if(!Array.isArray(data))throw new Error('La API no devolvió una lista. Revisa la configuración de SheetDB.');
 
-        if (!nombre || nivel < 1 || nivel > 10) {
-            alert('Introduce un nombre válido y nivel del 1 al 10.');
-            return;
-        }
+  players=data.map(normalizePlayer).filter(p=>p.id&&p.nombre);
 
-        btn.disabled = true;
-        btn.innerText = 'Guardando en la nube...';
+  selectedIds=new Set([...selectedIds].filter(id=>players.some(p=>p.id===id)));
 
-        try {
-            if (editingPlayerId) {
-                const player = players.find(p => p.id === editingPlayerId);
-                player.nombre = nombre;
-                player.nivel = nivel;
-                player.posicion = posicion;
-                player.foto = compressedPhotoBase64 || '';
+  renderPlayers();renderRanking();
 
-                await fetch(`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: player })
-                });
-            } else {
-                const newPlayer = {
-                    id: String(Date.now()),
-                    nombre: nombre,
-                    nivel: nivel,
-                    posicion: posicion,
-                    foto: compressedPhotoBase64 || '',
-                    goles: 0,
-                    mvp: 0,
-                    partidos: 0
-                };
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [newPlayer] })
-                });
-            }
+ }catch(err){
 
-            await fetchPlayers();
-            closeModal();
-        } catch (err) {
-            alert('Error al guardar en Google Sheets.');
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = 'Guardar en la Nube';
-        }
-    }
+  console.error('Error leyendo SheetDB:',err);
 
-    async function deletePlayer(id) {
-        const player = players.find(p => p.id === id);
-        if (!player || !confirm(`¿Eliminar a ${player.nombre}?`)) return;
-        try {
-            await fetch(`${API_URL}/id/${encodeURIComponent(id)}`, { method: 'DELETE' });
-            players = players.filter(p => p.id !== id);
-            selectedIds.delete(id);
-            renderPlayers();
-        } catch (err) {
-            alert('No se pudo eliminar.');
-        }
-    }
+  showApiError('No se pudieron cargar los veteranos. '+err.message+' Comprueba que la API de SheetDB apunta a la hoja correcta y que las columnas tienen los nombres esperados: id, nombre, nivel, posicion, foto, goles, mvp, partidos.');
 
-    function generateBalancedTeams(allowVariation = false) {
-        const convocated = players.filter(p => selectedIds.has(p.id));
-        if (convocated.length < 2) {
-            alert('Selecciona al menos 2 veteranos convocados.');
-            return;
-        }
+  document.getElementById('playersGrid').innerHTML='<div class="status-msg">No se pudo conectar con Google Sheets. Revisa el mensaje de error.</div>';
 
-        const posOrder = { 'POR': 1, 'DEF': 2, 'MED': 3, 'DEL': 4 };
-        const sorted = [...convocated].sort((a, b) => {
-            if (posOrder[a.posicion] !== posOrder[b.posicion]) return posOrder[a.posicion] - posOrder[b.posicion];
-            const noise = allowVariation ? (Math.random() - 0.5) * 1.5 : 0;
-            return (b.nivel + noise) - a.nivel;
-        });
+ }
 
-        currentTeamA = []; currentTeamB = [];
-        let sumA = 0, sumB = 0;
+}
 
-        sorted.forEach(player => {
-            if (currentTeamA.length < currentTeamB.length) { currentTeamA.push(player); sumA += player.nivel; }
-            else if (currentTeamB.length < currentTeamA.length) { currentTeamB.push(player); sumB += player.nivel; }
-            else {
-                if (sumA <= sumB) { currentTeamA.push(player); sumA += player.nivel; }
-                else { currentTeamB.push(player); sumB += player.nivel; }
-            }
-        });
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-        matchGoals = {};
-        convocated.forEach(p => { matchGoals[p.id] = 0; });
-        matchMvpId = null;
-        matchSaved = false;
+function getAvatar(p){return p.foto||`https://ui-avatars.com/api/?background=334155&color=fff&name=${encodeURIComponent(p.nombre||'Jugador')}`;}
 
-        document.getElementById('btnRecordMatch').disabled = false;
-        document.getElementById('btnRecordMatch').innerText = '🏁 Finalizar y Guardar Acta';
+function renderPlayers(){
 
-        renderMatchTeams();
-        switchTab('partido');
-    }
+ const grid=document.getElementById('playersGrid'),search=(document.getElementById('searchInput').value||'').toLowerCase(),pos=document.getElementById('positionFilter').value;
 
-    function shuffleAgain() { generateBalancedTeams(true); }
+ const filtered=players.filter(p=>p.nombre.toLowerCase().includes(search)&&(!pos||p.posicion===pos));
 
-    function changeMatchGoal(playerId, delta) {
-        if (matchSaved) return;
-        matchGoals[playerId] = Math.max(0, (matchGoals[playerId] || 0) + delta);
-        renderMatchTeams();
-    }
+ document.getElementById('selectedCount').textContent=selectedIds.size;
 
-    function toggleMatchMvp(playerId) {
-        if (matchSaved) return;
-        matchMvpId = (matchMvpId === playerId) ? null : playerId;
-        renderMatchTeams();
-    }
+ if(!filtered.length){grid.innerHTML='<div class="status-msg">No hay veteranos que mostrar.</div>';return;}
 
-    function renderMatchTeams() {
-        document.getElementById('emptyMatchMsg').style.display = 'none';
-        document.getElementById('matchActiveContent').style.display = 'block';
+ grid.innerHTML='';
 
-        const sumA = currentTeamA.reduce((acc, p) => acc + p.nivel, 0);
-        const sumB = currentTeamB.reduce((acc, p) => acc + p.nivel, 0);
+ filtered.forEach(p=>{
 
-        document.getElementById('sumTeamA').innerText = sumA;
-        document.getElementById('sumTeamB').innerText = sumB;
-        document.getElementById('avgTeamA').innerText = (sumA / (currentTeamA.length || 1)).toFixed(1);
-        document.getElementById('avgTeamB').innerText = (sumB / (currentTeamB.length || 1)).toFixed(1);
+  const card=document.createElement('div');card.className='player-card'+(selectedIds.has(p.id)?' selected':'');
 
-        document.getElementById('scoreGoalsA').innerText = currentTeamA.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
-        document.getElementById('scoreGoalsB').innerText = currentTeamB.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
+  card.innerHTML=`<div class="card-top"><span class="pos-badge pos-${escapeHTML(p.posicion)}">${escapeHTML(p.posicion)}</span><span class="rating-badge">${p.nivel}</span></div><div class="avatar-wrapper"><img loading="lazy" src="${escapeHTML(getAvatar(p))}" alt="${escapeHTML(p.nombre)}"></div><div class="player-name">${escapeHTML(p.nombre)}</div><div class="player-mini-stats"><span>⚽<strong>${p.goles}</strong>Goles</span><span>⭐<strong>${p.mvp}</strong>MVP</span><span>👟<strong>${p.partidos}</strong>Partidos</span></div><div class="check-indicator">✓</div><div class="card-footer-actions"><button class="card-action-btn edit" type="button">✏️ Editar</button><button class="card-action-btn delete" type="button">🗑️ Eliminar</button></div>`;
 
-        const renderList = (team, containerId) => {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            team.forEach(p => {
-                const row = document.createElement('div');
-                row.className = 'team-player-row';
-                row.innerHTML = `
-                    <div class="team-player-info">
-                        <img src="${getAvatar(p)}" alt="${p.nombre}">
-                        <div style="min-width:0;">
-                            <strong style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.nombre}</strong>
-                            <div style="font-size: 0.75rem; color: var(--muted);">
-                                <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span> Niv ${p.nivel}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="post-match-actions">
-                        <div class="goal-control">
-                            <button onclick="changeMatchGoal('${p.id}', -1)">-</button>
-                            <span>⚽ ${matchGoals[p.id] || 0}</span>
-                            <button onclick="changeMatchGoal('${p.id}', 1)">+</button>
-                        </div>
-                        <button class="mvp-btn ${matchMvpId === p.id ? 'active' : ''}" onclick="toggleMatchMvp('${p.id}')">⭐ MVP</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
-        };
-        renderList(currentTeamA, 'listTeamA');
-        renderList(currentTeamB, 'listTeamB');
-    }
+  card.addEventListener('click',e=>{if(e.target.closest('button'))return;if(selectedIds.has(p.id))selectedIds.delete(p.id);else selectedIds.add(p.id);renderPlayers();});
 
-    async function finishAndSaveMatch() {
-        const convocated = [...currentTeamA, ...currentTeamB];
-        if (convocated.length === 0 || matchSaved) return;
-        if (!confirm('¿Guardar acta del partido y actualizar estadísticas de los veteranos?')) return;
+  card.querySelector('.edit').addEventListener('click',e=>{e.stopPropagation();openEditModal(p.id);});
 
-        const btn = document.getElementById('btnRecordMatch');
-        btn.disabled = true;
+  card.querySelector('.delete').addEventListener('click',e=>{e.stopPropagation();deletePlayer(p.id);});
 
-        try {
-            for (let i = 0; i < convocated.length; i++) {
-                const p = convocated[i];
-                p.partidos += 1;
-                p.goles += (matchGoals[p.id] || 0);
-                if (matchMvpId === p.id) p.mvp += 1;
+  grid.appendChild(card);
 
-                btn.innerText = `⏳ Guardando (${i + 1}/${convocated.length})...`;
-                await fetch(`${API_URL}/id/${encodeURIComponent(p.id)}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: p })
-                });
-            }
+ });
 
-            matchSaved = true;
-            btn.innerText = '✅ Acta Guardada';
-            await fetchPlayers();
-            renderRanking();
-            alert('🏆 ¡Acta guardada correctamente!');
-        } catch (err) {
-            alert('Error guardando el acta.');
-            btn.disabled = false;
-            btn.innerText = '🏁 Finalizar y Guardar Acta';
-        }
-    }
+ document.getElementById('selectedCount').textContent=selectedIds.size;
 
-    function copyToWhatsApp() {
-        if (currentTeamA.length === 0) return;
-        let text = `⚽ *JOGO BONITO WALKING F.C.* ⚽\n*Convocatoria Veteranos*\n\n`;
-        text += `🔴 *Equipo A (Media: ${document.getElementById('avgTeamA').innerText})*\n`;
-        currentTeamA.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
-        text += `\n🔵 *Equipo B (Media: ${document.getElementById('avgTeamB').innerText})*\n`;
-        currentTeamB.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
+}
 
-        navigator.clipboard.writeText(text).then(() => alert('📲 ¡Copiado para WhatsApp!'));
-    }
+function switchTab(tab){
 
-    function renderRanking() {
-        const tbody = document.getElementById('rankingBody');
-        tbody.innerHTML = '';
-        const sorted = [...players].sort((a, b) => b.goles - a.goles || b.mvp - a.mvp);
+ document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===tab));
 
-        sorted.forEach((p, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>#${index + 1}</strong></td>
-                <td><div class="stats-player-cell"><img src="${getAvatar(p)}" alt="${p.nombre}"><span>${p.nombre}</span></div></td>
-                <td><span class="pos-badge pos-${p.posicion}">${p.posicion}</span></td>
-                <td><strong>${p.nivel}</strong></td>
-                <td>⚽ ${p.goles}</td>
-                <td>⭐ ${p.mvp}</td>
-                <td>👟 ${p.partidos}</td>
-                <td><button class="card-action-btn edit" style="padding:4px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
+ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+
+}
+
+function openNewModal(){
+
+ editingPlayerId=null;compressedPhotoBase64='';
+
+ document.getElementById('modalTitle').textContent='➕ Fichar veterano';
+
+ document.getElementById('playerForm').reset();
+
+ document.getElementById('newPlayerLevel').value=5;
+
+ document.getElementById('photoPreviewBox').style.display='none';
+
+ document.getElementById('playerModal').classList.add('open');
+
+}
+
+function openEditModal(id){const p=players.find(x=>x.id===String(id));if(!p)return;editingPlayerId=p.id;document.getElementById('modalTitle').textContent='✏️ Editar a '+p.nombre;document.getElementById('newPlayerName').value=p.nombre;document.getElementById('newPlayerLevel').value=p.nivel;document.getElementById('newPlayerPos').value=p.posicion||'MED';document.getElementById('newPlayerPhoto').value='';compressedPhotoBase64=p.foto||'';if(compressedPhotoBase64){document.getElementById('photoPreviewImg').src=compressedPhotoBase64;document.getElementById('photoPreviewBox').style.display='flex';}else{document.getElementById('photoPreviewBox').style.display='none';}document.getElementById('playerModal').classList.add('open');}
+
+function closeModal(){document.getElementById('playerModal').classList.remove('open');}
+
+function validateWriteResult(result,mode){
+
+ const count=mode==='create'?Number(result.created):Number(result.updated);
+
+ if(!Number.isFinite(count)||count<1)throw new Error(`La API no confirmó el ${mode==='create'?'alta':'cambio'}. Respuesta recibida: ${JSON.stringify(result)}`);
+
+}
+
+async function savePlayerForm(){
+
+ const nameInput=document.getElementById('newPlayerName'),levelInput=document.getElementById('newPlayerLevel'),posInput=document.getElementById('newPlayerPos'),btn=document.getElementById('savePlayerBtn');
+
+ const nombre=nameInput.value.trim(),nivel=Number(levelInput.value),posicion=posInput.value;
+
+ if(!nombre||!Number.isInteger(nivel)||nivel<1||nivel>10){alert('Introduce un nombre válido y un nivel entero del 1 al 10.');return;}
+
+ const isEdit=editingPlayerId!==null,old=players.find(p=>p.id===editingPlayerId);
+
+ if(isEdit&&!old){alert('No se encuentra el jugador que quieres editar. Recarga la plantilla.');return;}
+
+ const jugador={id:isEdit?editingPlayerId:String(Date.now()),nombre,nivel,posicion,foto:compressedPhotoBase64||'',goles:isEdit?old.goles:0,mvp:isEdit?old.mvp:0,partidos:isEdit?old.partidos:0};
+
+ btn.disabled=true;btn.textContent='Guardando...';clearApiError();
+
+ try{
+
+  const url=isEdit?`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`:API_URL;
+
+  const result=await apiRequest(url,{method:isEdit?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:isEdit?jugador:[jugador]})});
+
+  validateWriteResult(result,isEdit?'edit':'create');
+
+  await fetchPlayers();
+
+  if(document.getElementById('apiError').style.display!=='none')throw new Error('La escritura respondió correctamente, pero no se pudo recargar la lista. Comprueba Google Sheets.');
+
+  closeModal();alert(isEdit?'✅ Veterano actualizado correctamente.':'✅ Veterano fichado correctamente.');
+
+ }catch(err){console.error('Error guardando jugador:',err);showApiError('No se pudo guardar el jugador: '+err.message);alert('❌ Error al guardar:\n'+err.message);}
+
+ finally{btn.disabled=false;btn.textContent='Guardar en la Nube';}
+
+}
+
+async function deletePlayer(id){
+
+ const p=players.find(x=>x.id===String(id));if(!p||!confirm(`¿Eliminar a ${p.nombre}?`))return;
+
+ try{const result=await apiRequest(`${API_URL}/id/${encodeURIComponent(p.id)}`,{method:'DELETE'});if(Number(result.deleted)<1)throw new Error('La API no confirmó la eliminación: '+JSON.stringify(result));players=players.filter(x=>x.id!==p.id);selectedIds.delete(p.id);renderPlayers();renderRanking();}
+
+ catch(err){console.error(err);showApiError('No se pudo eliminar: '+err.message);alert('❌ No se pudo eliminar:\n'+err.message);}
+
+}
+
+function generateBalancedTeams(allowVariation=false){
+
+ const convocated=players.filter(p=>selectedIds.has(p.id));if(convocated.length<2){alert('Selecciona al menos 2 veteranos convocados.');return;}
+
+ const order={POR:1,DEF:2,MED:3,DEL:4};
+
+ const sorted=[...convocated].sort((a,b)=>{if(order[a.posicion]!==order[b.posicion])return (order[a.posicion]??9)-(order[b.posicion]??9);const noise=allowVariation?(Math.random()-.5)*1.5:0;return (b.nivel+noise)-a.nivel;});
+
+ currentTeamA=[];currentTeamB=[];let sumA=0,sumB=0;
+
+ sorted.forEach(p=>{if(currentTeamA.length<currentTeamB.length){currentTeamA.push(p);sumA+=p.nivel;}else if(currentTeamB.length<currentTeamA.length){currentTeamB.push(p);sumB+=p.nivel;}else if(sumA<=sumB){currentTeamA.push(p);sumA+=p.nivel;}else{currentTeamB.push(p);sumB+=p.nivel;}});
+
+ matchGoals={};convocated.forEach(p=>matchGoals[p.id]=0);matchMvpId=null;matchSaved=false;
+
+ const btn=document.getElementById('btnRecordMatch');btn.disabled=false;btn.textContent='🏁 Finalizar y Guardar Acta';renderMatchTeams();switchTab('partido');
+
+}
+
+function shuffleAgain(){generateBalancedTeams(true);}
+
+function changeMatchGoal(id,delta){if(matchSaved)return;matchGoals[id]=Math.max(0,(matchGoals[id]||0)+delta);renderMatchTeams();}
+
+function toggleMatchMvp(id){if(matchSaved)return;matchMvpId=matchMvpId===id?null:id;renderMatchTeams();}
+
+function renderMatchTeams(){
+
+ document.getElementById('emptyMatchMsg').style.display='none';document.getElementById('matchActiveContent').style.display='block';
+
+ const sumA=currentTeamA.reduce((s,p)=>s+p.nivel,0),sumB=currentTeamB.reduce((s,p)=>s+p.nivel,0);
+
+ document.getElementById('sumTeamA').textContent=sumA;document.getElementById('sumTeamB').textContent=sumB;document.getElementById('avgTeamA').textContent=(sumA/(currentTeamA.length||1)).toFixed(1);document.getElementById('avgTeamB').textContent=(sumB/(currentTeamB.length||1)).toFixed(1);
+
+ document.getElementById('scoreGoalsA').textContent=currentTeamA.reduce((s,p)=>s+(matchGoals[p.id]||0),0);document.getElementById('scoreGoalsB').textContent=currentTeamB.reduce((s,p)=>s+(matchGoals[p.id]||0),0);
+
+ const makeList=(team,id)=>{const el=document.getElementById(id);el.innerHTML='';team.forEach(p=>{const row=document.createElement('div');row.className='team-player-row';row.innerHTML=`<div class="team-player-info"><img src="${escapeHTML(getAvatar(p))}" alt="${escapeHTML(p.nombre)}"><div style="min-width:0"><strong style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHTML(p.nombre)}</strong><div style="font-size:.75rem;color:var(--muted)"><span class="pos-badge pos-${escapeHTML(p.posicion)}" style="padding:1px 5px;font-size:.65rem">${escapeHTML(p.posicion)}</span> Niv ${p.nivel}</div></div></div><div class="post-match-actions"><div class="goal-control"><button type="button" data-goal="-1" aria-label="Restar gol">−</button><span>⚽ ${matchGoals[p.id]||0}</span><button type="button" data-goal="1" aria-label="Sumar gol">+</button></div><button type="button" class="mvp-btn ${matchMvpId===p.id?'active':''}" ${matchSaved?'disabled':''}>⭐ MVP</button></div>`;
+
+ row.querySelectorAll('[data-goal]').forEach(b=>{b.disabled=matchSaved;b.addEventListener('click',()=>changeMatchGoal(p.id,Number(b.dataset.goal)));});row.querySelector('.mvp-btn').addEventListener('click',()=>toggleMatchMvp(p.id));el.appendChild(row);});};
+
+ makeList(currentTeamA,'listTeamA');makeList(currentTeamB,'listTeamB');
+
+}
+
+async function finishAndSaveMatch(){
+
+ const all=[...currentTeamA,...currentTeamB];if(!all.length||matchSaved)return;
+
+ if(!confirm('¿Guardar acta del partido y actualizar estadísticas de los veteranos?'))return;
+
+ const btn=document.getElementById('btnRecordMatch');btn.disabled=true;
+
+ try{
+
+  // Primero calculamos los cambios sin alterar las estadísticas en memoria.
+
+  const updates=all.map(p=>({id:p.id,nombre:p.nombre,nivel:p.nivel,posicion:p.posicion,foto:p.foto||'',goles:p.goles+(matchGoals[p.id]||0),mvp:p.mvp+(matchMvpId===p.id?1:0),partidos:p.partidos+1}));
+
+  for(let i=0;i<updates.length;i++){
+
+   btn.textContent=`⏳ Guardando (${i+1}/${updates.length})...`;
+
+   const p=updates[i];const result=await apiRequest(`${API_URL}/id/${encodeURIComponent(p.id)}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:p})});
+
+   if(Number(result.updated)<1)throw new Error(`SheetDB no confirmó la actualización de ${p.nombre}: ${JSON.stringify(result)}`);
+
+  }
+
+  matchSaved=true;btn.textContent='✅ Acta Guardada';await fetchPlayers();renderMatchTeams();renderRanking();alert('🏆 ¡Acta guardada correctamente!');
+
+ }catch(err){console.error(err);alert('❌ Error guardando el acta:\n'+err.message+'\n\nImportante: si falló a mitad del proceso, algunos jugadores podrían haberse actualizado. Comprueba la hoja antes de volver a guardar.');btn.disabled=false;btn.textContent='🏁 Reintentar / revisar acta';}
+
+}
+
+async function copyToWhatsApp(){
+
+ if(!currentTeamA.length){alert('Primero genera los equipos.');return;}
+
+ let text='⚽ *JOGO BONITO WALKING F.C.* ⚽\n*Convocatoria Veteranos*\n\n';
+
+ text+=`🔴 *Equipo A (Media: ${document.getElementById('avgTeamA').textContent})*\n`;currentTeamA.forEach(p=>text+=`• [${p.posicion}] ${p.nombre} (${p.nivel})\n`);
+
+ text+=`\n🔵 *Equipo B (Media: ${document.getElementById('avgTeamB').textContent})*\n`;currentTeamB.forEach(p=>text+=`• [${p.posicion}] ${p.nombre} (${p.nivel})\n`);
+
+ try{await navigator.clipboard.writeText(text);alert('📲 ¡Copiado para WhatsApp!');}catch{window.prompt('Copia este texto para WhatsApp:',text);}
+
+}
+
+function renderRanking(){
+
+ const tbody=document.getElementById('rankingBody');tbody.innerHTML='';
+
+ [...players].sort((a,b)=>b.goles-a.goles||b.mvp-a.mvp).forEach((p,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td><strong>#${i+1}</strong></td><td><div class="stats-player-cell"><img loading="lazy" src="${escapeHTML(getAvatar(p))}" alt="${escapeHTML(p.nombre)}"><span>${escapeHTML(p.nombre)}</span></div></td><td><span class="pos-badge pos-${escapeHTML(p.posicion)}">${escapeHTML(p.posicion)}</span></td><td><strong>${p.nivel}</strong></td><td>⚽ ${p.goles}</td><td>⭐ ${p.mvp}</td><td>👟 ${p.partidos}</td><td><button class="card-action-btn edit" style="padding:4px 10px">✏️ Editar</button></td>`;tr.querySelector('button').addEventListener('click',()=>openEditModal(p.id));tbody.appendChild(tr);});
+
+}
+
+document.getElementById('playerModal').addEventListener('click',e=>{if(e.target.id==='playerModal')closeModal();});
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+fetchPlayers();
+
 </script>
 
 </body>
+
 </html>
