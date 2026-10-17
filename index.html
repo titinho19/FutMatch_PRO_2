@@ -130,6 +130,7 @@
             min-width: 150px;
         }
 
+        /* PLAYER CARDS */
         .players-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -242,21 +243,58 @@
         }
         .player-card.selected .check-indicator { display: flex; }
 
-        .delete-player-btn {
-            margin-top: 8px;
-            background: transparent;
-            border: none;
-            color: #64748b;
-            font-size: 0.75rem;
-            cursor: pointer;
+        .card-footer-actions {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
-        .delete-player-btn:hover { color: var(--danger); }
+        .card-action-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid transparent;
+            color: var(--muted);
+            font-size: 0.75rem;
+            padding: 6px 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+        .card-action-btn.edit:hover { background: var(--accent); color: white; }
+        .card-action-btn.delete:hover { background: var(--danger); color: white; }
 
+        /* SCOREBOARD */
+        .scoreboard {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 28px;
+            text-align: center;
+        }
+        .score-team { font-weight: 800; font-size: 1.1rem; }
+        .score-numbers {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: #090e1a;
+            padding: 6px 22px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            letter-spacing: 4px;
+        }
+
+        /* TEAMS PITCH VIEW */
         .teams-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-top: 15px;
         }
         .team-box {
             background: var(--card);
@@ -281,33 +319,69 @@
             background: rgba(15, 23, 42, 0.6);
             border-radius: 10px;
             margin-bottom: 8px;
+            gap: 8px;
         }
         .team-player-info {
             display: flex;
             align-items: center;
             gap: 10px;
+            min-width: 0;
         }
         .team-player-info img {
             width: 38px;
             height: 38px;
             border-radius: 50%;
             object-fit: cover;
+            flex-shrink: 0;
         }
-        .post-match-actions button {
+        .post-match-actions {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+        .goal-control {
+            display: inline-flex;
+            align-items: center;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .goal-control button {
+            background: transparent;
+            color: var(--text);
+            border: none;
+            padding: 5px 9px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 0.9rem;
+        }
+        .goal-control button:hover { background: var(--card-hover); }
+        .goal-control span {
+            padding: 0 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .mvp-btn {
             padding: 6px 10px;
             font-size: 0.75rem;
-            border-radius: 6px;
-            border: none;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #0f172a;
+            color: var(--muted);
             cursor: pointer;
             font-weight: 700;
-            margin-left: 4px;
-            transition: opacity 0.2s;
+            transition: all 0.15s;
         }
-        .post-match-actions button:disabled {
-            opacity: 0.5;
-            cursor: wait;
+        .mvp-btn.active {
+            background: var(--warning);
+            color: #451a03;
+            border-color: var(--warning);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
         }
 
+        /* TABLE STATS */
         .stats-table {
             width: 100%;
             border-collapse: collapse;
@@ -324,6 +398,7 @@
         .stats-player-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; }
         .stats-player-cell img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
 
+        /* MODAL */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -378,19 +453,21 @@
             .teams-grid { grid-template-columns: 1fr; }
             .convocatoria-bar { flex-direction: column; align-items: stretch; text-align: center; }
             .bar-actions { justify-content: center; }
+            .scoreboard { gap: 12px; }
+            .score-numbers { font-size: 1.6rem; padding: 6px 14px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>⚽ FutMatch <span>PRO 2.0</span></h1>
+    <h1>⚽ WALKING <span>F.C.</span></h1>
     <p>Bolsa de Jugadores, Convocatorias y Equilibrio Inteligente en la Nube</p>
 </header>
 
 <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('bolsa')">📋 Bolsa y Convocatoria</button>
-    <button class="tab-btn" onclick="switchTab('partido')">⚖️ Equipos del Finde</button>
+    <button class="tab-btn" onclick="switchTab('partido')">⚖️ Partido del Finde</button>
     <button class="tab-btn" onclick="switchTab('ranking')">🏆 Ranking Histórico</button>
 </div>
 
@@ -404,7 +481,7 @@
             </div>
             <div class="bar-actions">
                 <button class="btn btn-outline" onclick="toggleSelectAll()">Seleccionar Todos / Ninguno</button>
-                <button class="btn btn-secondary" onclick="openModal()">+ Nuevo Jugador</button>
+                <button class="btn btn-secondary" onclick="openCreateModal()">+ Nuevo Jugador</button>
                 <button class="btn" id="btnGenerar" onclick="generateBalancedTeams()">⚖️ Generar Equipos</button>
             </div>
         </div>
@@ -428,35 +505,46 @@
     <div id="sec-partido" class="section">
         <div class="convocatoria-bar">
             <div>
-                <strong>Resultado del Sorteo Inteligente</strong>
-                <p style="font-size: 0.85rem; color: var(--muted);">Equilibrado por media de nivel y reparto de posiciones</p>
+                <strong>Acta del Partido en Curso</strong>
+                <p style="font-size: 0.85rem; color: var(--muted);">Apunta los goles de hoy y el MVP. Al terminar, pulsa "Finalizar y Guardar Acta".</p>
             </div>
             <div class="bar-actions">
                 <button class="btn btn-outline" onclick="shuffleAgain()">🎲 Re-sortear</button>
-                <button class="btn" onclick="copyToWhatsApp()">📲 Copiar para WhatsApp</button>
-                <button class="btn btn-warning" id="btnRecordMatch" onclick="recordMatchPlayed()">✅ Sumar +1 Partido a Todos</button>
+                <button class="btn btn-secondary" onclick="copyToWhatsApp()">📲 WhatsApp</button>
+                <button class="btn btn-warning" id="btnRecordMatch" onclick="finishAndSaveMatch()">🏁 Finalizar y Guardar Acta</button>
             </div>
         </div>
 
         <div id="emptyMatchMsg" class="status-msg">
-            Todavía no has generado los equipos. Ve a la pestaña <strong>Bolsa y Convocatoria</strong>, selecciona a los jugadores que vienen este finde y pulsa "Generar Equipos".
+            Todavía no has generado los equipos de hoy. Ve a <strong>Bolsa y Convocatoria</strong>, selecciona a los asistentes y pulsa "Generar Equipos".
         </div>
 
-        <div id="teamsContainer" class="teams-grid" style="display: none;">
-            <div class="team-box">
-                <div class="team-header">
-                    <h3 style="color: var(--danger);">🔴 Equipo A</h3>
-                    <span>Media: <strong id="avgTeamA">0.0</strong> | Total: <span id="sumTeamA">0</span></span>
+        <div id="matchActiveContent" style="display: none;">
+            <!-- MARCADOR EN VIVO DEL PARTIDO -->
+            <div class="scoreboard">
+                <div class="score-team" style="color: var(--danger);">🔴 EQUIPO A</div>
+                <div class="score-numbers">
+                    <span id="scoreGoalsA">0</span> - <span id="scoreGoalsB">0</span>
                 </div>
-                <div id="listTeamA"></div>
+                <div class="score-team" style="color: var(--accent);">EQUIPO B 🔵</div>
             </div>
 
-            <div class="team-box team-b">
-                <div class="team-header">
-                    <h3 style="color: var(--accent);">🔵 Equipo B</h3>
-                    <span>Media: <strong id="avgTeamB">0.0</strong> | Total: <span id="sumTeamB">0</span></span>
+            <div id="teamsContainer" class="teams-grid">
+                <div class="team-box">
+                    <div class="team-header">
+                        <h3 style="color: var(--danger);">🔴 Equipo A</h3>
+                        <span>Media: <strong id="avgTeamA">0.0</strong> | Pts: <span id="sumTeamA">0</span></span>
+                    </div>
+                    <div id="listTeamA"></div>
                 </div>
-                <div id="listTeamB"></div>
+
+                <div class="team-box team-b">
+                    <div class="team-header">
+                        <h3 style="color: var(--accent);">🔵 Equipo B</h3>
+                        <span>Media: <strong id="avgTeamB">0.0</strong> | Pts: <span id="sumTeamB">0</span></span>
+                    </div>
+                    <div id="listTeamB"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -471,9 +559,10 @@
                         <th>Jugador</th>
                         <th>Pos</th>
                         <th>Nivel</th>
-                        <th>⚽ Goles</th>
+                        <th>⚽ Goles Totales</th>
                         <th>⭐ MVPs</th>
                         <th>👟 Partidos</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody id="rankingBody"></tbody>
@@ -483,10 +572,10 @@
 
 </div>
 
-<!-- MODAL PARA AÑADIR JUGADOR A LA BOLSA -->
+<!-- MODAL PARA CREAR O EDITAR JUGADOR -->
 <div class="modal-overlay" id="playerModal">
     <div class="modal">
-        <h3>➕ Fichar Jugador en la Bolsa</h3>
+        <h3 id="modalTitle">➕ Fichar Jugador en la Bolsa</h3>
         <div class="form-control">
             <label>Nombre o Apodo *</label>
             <input type="text" id="newPlayerName" placeholder="Ej: Dani Carvajal">
@@ -509,12 +598,15 @@
             <input type="file" id="newPlayerPhoto" accept="image/*" onchange="handlePhotoUpload(event)">
             <div class="preview-box" id="photoPreviewBox" style="display: none;">
                 <img id="photoPreviewImg" src="" alt="Vista previa">
-                <span style="font-size: 0.8rem; color: var(--primary);">✓ Foto comprimida lista</span>
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size: 0.8rem; color: var(--primary);">✓ Foto lista</span>
+                    <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.7rem;" onclick="clearPhoto()">Quitar foto</button>
+                </div>
             </div>
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
             <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
-            <button class="btn" id="savePlayerBtn" onclick="saveNewPlayer()">Guardar en la Nube</button>
+            <button class="btn" id="savePlayerBtn" onclick="savePlayerForm()">Guardar en la Nube</button>
         </div>
     </div>
 </div>
@@ -523,9 +615,17 @@
     const API_URL = 'https://sheetdb.io/api/v1/rx0tzvfprheyf';
 
     let players = [];
-    let selectedIds = new Set(); // Guardamos el ID único de cada jugador
+    let selectedIds = new Set();
     let currentTeamA = [];
     let currentTeamB = [];
+
+    // Estado EXCLUSIVO del partido de hoy (empieza siempre a 0 al generar equipos)
+    let matchGoals = {}; // { playerId: golesHoy }
+    let matchMvpId = null; // ID del jugador MVP de hoy
+    let matchSaved = false;
+
+    // Estado del modal (Crear vs Editar)
+    let editingPlayerId = null;
     let compressedPhotoBase64 = '';
     let isUpdating = false;
 
@@ -556,7 +656,6 @@
         return `https://ui-avatars.com/api/?name=${encodedName}&background=0D8ABC&color=fff&bold=true`;
     }
 
-    // Construye el payload completo para que SheetDB NUNCA borre ni deje en blanco ninguna celda de la fila
     function buildFullRowPayload(player) {
         return {
             id: String(player.id),
@@ -570,6 +669,17 @@
         };
     }
 
+    async function syncPlayerToCloud(player) {
+        const response = await fetch(`${API_URL}/id/${encodeURIComponent(player.id)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: buildFullRowPayload(player) })
+        });
+        if (!response.ok) {
+            throw new Error('Error actualizando fila en SheetDB');
+        }
+    }
+
     async function fetchPlayers() {
         const loading = document.getElementById('loadingState');
         loading.style.display = 'block';
@@ -577,7 +687,6 @@
             const res = await fetch(API_URL);
             const data = await res.json();
 
-            // Filtramos filas vacías o corruptas que solo tenían id sin nombre
             players = (Array.isArray(data) ? data : [])
                 .filter(p => (p.nombre && String(p.nombre).trim() !== '') || (p.name && String(p.name).trim() !== ''))
                 .map((p, idx) => ({
@@ -617,7 +726,7 @@
             const card = document.createElement('div');
             card.className = `player-card ${isSelected ? 'selected' : ''}`;
             card.onclick = (e) => {
-                if (e.target.classList.contains('delete-player-btn')) return;
+                if (e.target.closest('.card-action-btn')) return;
                 togglePlayerSelection(p.id);
             };
 
@@ -636,7 +745,10 @@
                     <div><strong>${p.mvp}</strong>MVPs</div>
                     <div><strong>${p.partidos}</strong>PJ</div>
                 </div>
-                <button class="delete-player-btn" onclick="deletePlayer('${p.id}')">🗑️ Eliminar</button>
+                <div class="card-footer-actions">
+                    <button class="card-action-btn edit" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+                    <button class="card-action-btn delete" onclick="deletePlayer('${p.id}')">🗑️</button>
+                </div>
             `;
             grid.appendChild(card);
         });
@@ -662,6 +774,7 @@
         renderPlayers();
     }
 
+    // Subida y compresión de foto
     function handlePhotoUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -671,7 +784,7 @@
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const MAX_SIZE = 90; // Miniatura ligera para Google Sheets
+                const MAX_SIZE = 90;
                 canvas.width = MAX_SIZE;
                 canvas.height = MAX_SIZE;
                 const ctx = canvas.getContext('2d');
@@ -691,7 +804,54 @@
         reader.readAsDataURL(file);
     }
 
-    async function saveNewPlayer() {
+    function clearPhoto() {
+        compressedPhotoBase64 = '';
+        document.getElementById('newPlayerPhoto').value = '';
+        document.getElementById('photoPreviewBox').style.display = 'none';
+    }
+
+    // Abrir Modal para NUEVO jugador
+    function openCreateModal() {
+        editingPlayerId = null;
+        document.getElementById('modalTitle').innerText = '➕ Fichar Jugador en la Bolsa';
+        document.getElementById('newPlayerName').value = '';
+        document.getElementById('newPlayerLevel').value = '7';
+        document.getElementById('newPlayerPos').value = 'MED';
+        document.getElementById('newPlayerPhoto').value = '';
+        document.getElementById('photoPreviewBox').style.display = 'none';
+        compressedPhotoBase64 = '';
+        document.getElementById('playerModal').classList.add('open');
+    }
+
+    // Abrir Modal para EDITAR jugador existente (mantiene sus estadísticas intactas)
+    function openEditModal(id) {
+        const player = players.find(p => p.id === id);
+        if (!player) return;
+
+        editingPlayerId = id;
+        document.getElementById('modalTitle').innerText = `✏️ Editar a ${player.nombre}`;
+        document.getElementById('newPlayerName').value = player.nombre;
+        document.getElementById('newPlayerLevel').value = player.nivel;
+        document.getElementById('newPlayerPos').value = player.posicion || 'MED';
+        document.getElementById('newPlayerPhoto').value = '';
+
+        compressedPhotoBase64 = player.foto || '';
+        if (compressedPhotoBase64) {
+            document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
+            document.getElementById('photoPreviewBox').style.display = 'flex';
+        } else {
+            document.getElementById('photoPreviewBox').style.display = 'none';
+        }
+
+        document.getElementById('playerModal').classList.add('open');
+    }
+
+    function closeModal() {
+        document.getElementById('playerModal').classList.remove('open');
+    }
+
+    // Guardar (Crear o Editar) jugador en Google Sheets
+    async function savePlayerForm() {
         const nameInput = document.getElementById('newPlayerName');
         const levelInput = document.getElementById('newPlayerLevel');
         const posInput = document.getElementById('newPlayerPos');
@@ -706,40 +866,58 @@
             return;
         }
 
-        if (players.some(p => p.nombre.toLowerCase() === nombre.toLowerCase())) {
-            alert('Ya existe un jugador con ese nombre en la bolsa.');
+        // Verificar duplicados de nombre
+        const duplicate = players.find(p => p.nombre.toLowerCase() === nombre.toLowerCase() && p.id !== editingPlayerId);
+        if (duplicate) {
+            alert('Ya existe otro jugador con ese nombre en la bolsa.');
             return;
         }
 
         btn.disabled = true;
         btn.innerText = 'Guardando...';
 
-        const newPlayer = {
-            id: String(Date.now()),
-            nombre: nombre,
-            nivel: nivel,
-            posicion: posicion,
-            foto: compressedPhotoBase64 || '',
-            goles: 0,
-            mvp: 0,
-            partidos: 0
-        };
-
         try {
-            const res = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: [buildFullRowPayload(newPlayer)] })
-            });
+            if (editingPlayerId) {
+                // MODO EDICIÓN: Conserva goles, mvp y partidos históricos
+                const player = players.find(p => p.id === editingPlayerId);
+                player.nombre = nombre;
+                player.nivel = nivel;
+                player.posicion = posicion;
+                player.foto = compressedPhotoBase64 || '';
 
-            if (!res.ok) throw new Error('Error en respuesta de SheetDB');
+                await syncPlayerToCloud(player);
+            } else {
+                // MODO CREACIÓN
+                const newPlayer = {
+                    id: String(Date.now()),
+                    nombre: nombre,
+                    nivel: nivel,
+                    posicion: posicion,
+                    foto: compressedPhotoBase64 || '',
+                    goles: 0,
+                    mvp: 0,
+                    partidos: 0
+                };
 
-            players.push(newPlayer);
-            selectedIds.add(newPlayer.id);
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: [buildFullRowPayload(newPlayer)] })
+                });
+                if (!res.ok) throw new Error('Error creando fila en SheetDB');
+
+                players.push(newPlayer);
+                selectedIds.add(newPlayer.id);
+            }
+
             closeModal();
             renderPlayers();
+            if (currentTeamA.length > 0 || currentTeamB.length > 0) {
+                renderMatchTeams();
+            }
+            renderRanking();
         } catch (err) {
-            alert('Error guardando el jugador en Google Sheets. Revisa que las columnas de la Fila 1 sean: id, nombre, nivel, posicion, foto, goles, mvp, partidos');
+            alert('Error guardando en Google Sheets. Verifica tu conexión.');
             console.error(err);
         } finally {
             btn.disabled = false;
@@ -764,6 +942,7 @@
         }
     }
 
+    // Generar equipos e inicializar el marcador del partido de hoy a 0
     function generateBalancedTeams(allowVariation = false) {
         const convocated = players.filter(p => selectedIds.has(p.id));
 
@@ -805,6 +984,16 @@
             }
         });
 
+        // Reiniciar goles y MVP del partido actual a 0
+        matchGoals = {};
+        convocated.forEach(p => { matchGoals[p.id] = 0; });
+        matchMvpId = null;
+        matchSaved = false;
+
+        const btnRecord = document.getElementById('btnRecordMatch');
+        btnRecord.disabled = false;
+        btnRecord.innerText = '🏁 Finalizar y Guardar Acta';
+
         renderMatchTeams();
         switchTab('partido');
     }
@@ -813,9 +1002,28 @@
         generateBalancedTeams(true);
     }
 
+    // Cambiar goles del partido de HOY (+1 o -1)
+    function changeMatchGoal(playerId, delta) {
+        if (matchSaved) {
+            alert('El acta de este partido ya fue guardada. Genera un nuevo partido si quieres anotar otro.');
+            return;
+        }
+        const current = matchGoals[playerId] || 0;
+        const updated = Math.max(0, current + delta);
+        matchGoals[playerId] = updated;
+        renderMatchTeams();
+    }
+
+    // Marcar o desmarcar el MVP del partido de HOY
+    function toggleMatchMvp(playerId) {
+        if (matchSaved) return;
+        matchMvpId = (matchMvpId === playerId) ? null : playerId;
+        renderMatchTeams();
+    }
+
     function renderMatchTeams() {
         document.getElementById('emptyMatchMsg').style.display = 'none';
-        document.getElementById('teamsContainer').style.display = 'grid';
+        document.getElementById('matchActiveContent').style.display = 'block';
 
         const sumA = currentTeamA.reduce((acc, p) => acc + p.nivel, 0);
         const sumB = currentTeamB.reduce((acc, p) => acc + p.nivel, 0);
@@ -825,26 +1033,41 @@
         document.getElementById('avgTeamA').innerText = (sumA / (currentTeamA.length || 1)).toFixed(1);
         document.getElementById('avgTeamB').innerText = (sumB / (currentTeamB.length || 1)).toFixed(1);
 
+        // Calcular resultado del partido de hoy en vivo
+        const goalsTeamA = currentTeamA.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
+        const goalsTeamB = currentTeamB.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
+        document.getElementById('scoreGoalsA').innerText = goalsTeamA;
+        document.getElementById('scoreGoalsB').innerText = goalsTeamB;
+
         const renderList = (team, containerId) => {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             team.forEach(p => {
+                const todayGoals = matchGoals[p.id] || 0;
+                const isMvp = (matchMvpId === p.id);
+
                 const row = document.createElement('div');
                 row.className = 'team-player-row';
                 row.innerHTML = `
                     <div class="team-player-info">
                         <img src="${getAvatar(p)}" alt="${p.nombre}">
-                        <div>
-                            <strong>${p.nombre}</strong>
+                        <div style="min-width:0;">
+                            <strong style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.nombre}</strong>
                             <div style="font-size: 0.75rem; color: var(--muted);">
                                 <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span>
-                                Nivel ${p.nivel}
+                                Niv ${p.nivel}
                             </div>
                         </div>
                     </div>
                     <div class="post-match-actions">
-                        <button class="stat-btn" style="background: var(--primary); color:#052e16;" onclick="addStat('${p.id}', 'goles')">+1 ⚽ (${p.goles})</button>
-                        <button class="stat-btn" style="background: var(--warning); color:#451a03;" onclick="addStat('${p.id}', 'mvp')">+1 ⭐ (${p.mvp})</button>
+                        <div class="goal-control">
+                            <button onclick="changeMatchGoal('${p.id}', -1)">-</button>
+                            <span>⚽ ${todayGoals}</span>
+                            <button onclick="changeMatchGoal('${p.id}', 1)">+</button>
+                        </div>
+                        <button class="mvp-btn ${isMvp ? 'active' : ''}" onclick="toggleMatchMvp('${p.id}')">
+                            ⭐ MVP
+                        </button>
                     </div>
                 `;
                 container.appendChild(row);
@@ -855,69 +1078,44 @@
         renderList(currentTeamB, 'listTeamB');
     }
 
-    // Actualiza la fila completa por ID en SheetDB para no perder nunca ningún campo
-    async function syncPlayerToCloud(player) {
-        const response = await fetch(`${API_URL}/id/${encodeURIComponent(player.id)}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: buildFullRowPayload(player) })
-        });
-        if (!response.ok) {
-            throw new Error('Error actualizando fila en SheetDB');
-        }
-    }
-
-    // Sumar Gol o MVP enviando toda la fila completa y bloqueando clics dobles
-    async function addStat(id, field) {
-        if (isUpdating) return;
-        const player = players.find(p => p.id === id);
-        if (!player) return;
-
-        isUpdating = true;
-        document.querySelectorAll('.stat-btn').forEach(b => b.disabled = true);
-
-        player[field] = Number(player[field] || 0) + 1;
-        renderMatchTeams();
-        renderPlayers();
-
-        try {
-            await syncPlayerToCloud(player);
-        } catch (err) {
-            console.error('Error al actualizar estadística:', err);
-            alert('Hubo un problema al sincronizar con Google Sheets.');
-        } finally {
-            isUpdating = false;
-            document.querySelectorAll('.stat-btn').forEach(b => b.disabled = false);
-        }
-    }
-
-    // Sumar +1 partido jugado de forma SECUENCIAL (uno por uno) para no saturar Google Sheets
-    async function recordMatchPlayed() {
+    // Guardar toda el acta del partido (Suma los goles de hoy, el MVP de hoy y +1 partido a cada convocado)
+    async function finishAndSaveMatch() {
         const convocated = [...currentTeamA, ...currentTeamB];
-        if (convocated.length === 0 || isUpdating) return;
-        if (!confirm(`¿Sumar +1 partido jugado a los ${convocated.length} convocados en Google Sheets?`)) return;
+        if (convocated.length === 0 || isUpdating || matchSaved) return;
+
+        const goalsA = document.getElementById('scoreGoalsA').innerText;
+        const goalsB = document.getElementById('scoreGoalsB').innerText;
+        if (!confirm(`¿Guardar acta del partido (Equipo A ${goalsA} - ${goalsB} Equipo B)?\nSe sumará +1 partido jugado, los goles de hoy y el MVP en Google Sheets.`)) return;
 
         isUpdating = true;
         const btn = document.getElementById('btnRecordMatch');
-        const originalText = btn.innerText;
         btn.disabled = true;
 
         try {
             for (let i = 0; i < convocated.length; i++) {
                 const p = convocated[i];
+                const gHoy = matchGoals[p.id] || 0;
+                const mvpHoy = (matchMvpId === p.id) ? 1 : 0;
+
                 p.partidos = Number(p.partidos || 0) + 1;
-                btn.innerText = `⏳ Guardando (${i + 1}/${convocated.length})...`;
+                p.goles = Number(p.goles || 0) + gHoy;
+                p.mvp = Number(p.mvp || 0) + mvpHoy;
+
+                btn.innerText = `⏳ Guardando acta (${i + 1}/${convocated.length})...`;
                 await syncPlayerToCloud(p);
             }
+
+            matchSaved = true;
+            btn.innerText = '✅ Acta Guardada en la Nube';
             renderPlayers();
-            renderMatchTeams();
-            alert('✅ ¡Partidos actualizados correctamente en Google Sheets sin perder ningún dato!');
+            renderRanking();
+            alert('🏆 ¡Acta del partido guardada! Las estadísticas históricas ya están actualizadas.');
         } catch (err) {
             console.error(err);
-            alert('Hubo un error actualizando alguno de los jugadores.');
-        } finally {
+            alert('Hubo un error al guardar el acta en Google Sheets.');
             btn.disabled = false;
-            btn.innerText = originalText;
+            btn.innerText = '🏁 Finalizar y Guardar Acta';
+        } finally {
             isUpdating = false;
         }
     }
@@ -964,22 +1162,12 @@
                 <td>⚽ ${p.goles}</td>
                 <td>⭐ ${p.mvp}</td>
                 <td>👟 ${p.partidos}</td>
+                <td>
+                    <button class="card-action-btn edit" style="padding:4px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
-    }
-
-    function openModal() {
-        document.getElementById('newPlayerName').value = '';
-        document.getElementById('newPlayerLevel').value = '7';
-        document.getElementById('newPlayerPhoto').value = '';
-        document.getElementById('photoPreviewBox').style.display = 'none';
-        compressedPhotoBase64 = '';
-        document.getElementById('playerModal').classList.add('open');
-    }
-
-    function closeModal() {
-        document.getElementById('playerModal').classList.remove('open');
     }
 </script>
 
