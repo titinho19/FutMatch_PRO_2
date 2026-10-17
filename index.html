@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutMatch PRO 2.0 - Cloud Manager</title>
+    <title>Jogo Bonito Walking F.C.</title>
     <style>
         :root {
             --bg: #0f172a;
             --card: #1e293b;
             --card-hover: #334155;
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --accent: #3b82f6;
+            --primary: #facc15; /* Amarillo clásico */
+            --primary-dark: #ca8a04;
+            --accent: #22c55e; /* Verde Brasil */
             --warning: #f59e0b;
             --danger: #ef4444;
             --text: #f8fafc;
@@ -28,14 +28,56 @@
         }
 
         header {
-            background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #166534 0%, #0f172a 100%);
             padding: 24px 20px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 4px solid var(--primary);
         }
-        header h1 { font-size: 1.8rem; letter-spacing: 0.5px; }
-        header h1 span { color: var(--primary); }
-        header p { color: var(--muted); font-size: 0.9rem; margin-top: 5px; }
+        .club-badge-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        /* ESCUDO VECTORIAL JOGO BONITO WALKING F.C. (Estilo Brasil + Muletas X + JB) */
+        .club-shield {
+            width: 65px;
+            height: 75px;
+            background: #22c55e;
+            border: 3px solid #facc15;
+            border-radius: 12px 12px 35px 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .club-shield::before, .club-shield::after {
+            content: '';
+            position: absolute;
+            width: 45px;
+            height: 4px;
+            background: #94a3b8;
+            top: 36px;
+        }
+        .club-shield::before { transform: rotate(35deg); }
+        .club-shield::after { transform: rotate(-35deg); }
+        .shield-text {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #0f172a;
+            background: #facc15;
+            padding: 2px 8px;
+            border-radius: 6px;
+            z-index: 2;
+            letter-spacing: 1px;
+            border: 1px solid #166534;
+        }
+
+        header h1 { font-size: 1.7rem; color: var(--primary); letter-spacing: 0.5px; }
+        header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; font-style: italic; }
 
         .tabs {
             display: flex;
@@ -60,7 +102,8 @@
         }
         .tab-btn.active {
             background: var(--primary);
-            color: #06281e;
+            color: #0f172a;
+            font-weight: 700;
         }
 
         .container { max-width: 960px; margin: 20px auto; padding: 0 16px; }
@@ -86,7 +129,7 @@
         }
         .counter-badge span {
             background: var(--primary);
-            color: #06281e;
+            color: #0f172a;
             padding: 3px 10px;
             border-radius: 999px;
             margin-left: 6px;
@@ -95,7 +138,7 @@
 
         .btn {
             background: var(--primary);
-            color: #052e16;
+            color: #0f172a;
             border: none;
             padding: 10px 16px;
             border-radius: 8px;
@@ -130,7 +173,6 @@
             min-width: 150px;
         }
 
-        /* PLAYER CARDS */
         .players-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -153,8 +195,8 @@
         .player-card:hover { border-color: #64748b; transform: translateY(-2px); }
         .player-card.selected {
             border-color: var(--primary);
-            background: linear-gradient(160deg, #064e3b 0%, #0f172a 100%);
-            box-shadow: 0 0 18px rgba(16, 185, 129, 0.3);
+            background: linear-gradient(160deg, #14532d 0%, #0f172a 100%);
+            box-shadow: 0 0 18px rgba(250, 204, 21, 0.25);
         }
         .card-top {
             width: 100%;
@@ -164,8 +206,8 @@
             margin-bottom: 6px;
         }
         .rating-badge {
-            background: var(--warning);
-            color: #451a03;
+            background: var(--primary);
+            color: #0f172a;
             font-weight: 900;
             font-size: 1.2rem;
             width: 38px;
@@ -185,7 +227,7 @@
         }
         .pos-POR { background: #eab308; color: #422006; }
         .pos-DEF { background: #3b82f6; color: white; }
-        .pos-MED { background: #10b981; color: #052e16; }
+        .pos-MED { background: #22c55e; color: #052e16; }
         .pos-DEL { background: #ef4444; color: white; }
 
         .avatar-wrapper {
@@ -231,7 +273,7 @@
             top: -8px;
             right: -8px;
             background: var(--primary);
-            color: #052e16;
+            color: #0f172a;
             width: 26px;
             height: 26px;
             border-radius: 50%;
@@ -266,7 +308,6 @@
         .card-action-btn.edit:hover { background: var(--accent); color: white; }
         .card-action-btn.delete:hover { background: var(--danger); color: white; }
 
-        /* SCOREBOARD */
         .scoreboard {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid var(--border);
@@ -288,9 +329,9 @@
             border-radius: 12px;
             border: 1px solid var(--border);
             letter-spacing: 4px;
+            color: var(--primary);
         }
 
-        /* TEAMS PITCH VIEW */
         .teams-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -381,7 +422,6 @@
             box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
         }
 
-        /* TABLE STATS */
         .stats-table {
             width: 100%;
             border-collapse: collapse;
@@ -398,7 +438,6 @@
         .stats-player-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; }
         .stats-player-cell img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
 
-        /* MODAL */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -418,7 +457,7 @@
             width: 100%;
             padding: 24px;
         }
-        .modal h3 { margin-bottom: 16px; }
+        .modal h3 { margin-bottom: 16px; color: var(--primary); }
         .form-control { margin-bottom: 14px; }
         .form-control label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 5px; }
         .form-control input, .form-control select {
@@ -461,14 +500,21 @@
 <body>
 
 <header>
-    <h1>⚽ FutMatch <span>PRO 2.0</span></h1>
-    <p>Bolsa de Jugadores, Convocatorias y Equilibrio Inteligente en la Nube</p>
+    <div class="club-badge-container">
+        <div class="club-shield">
+            <div class="shield-text">JB</div>
+        </div>
+        <div style="text-align: left;">
+            <h1>Jogo Bonito Walking F.C.</h1>
+            <p>"Aquí se corre poco, pero el balón va limpio (y los meniscos sufren lo justo)"</p>
+        </div>
+    </div>
 </header>
 
 <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('bolsa')">📋 Bolsa y Convocatoria</button>
     <button class="tab-btn" onclick="switchTab('partido')">⚖️ Partido del Finde</button>
-    <button class="tab-btn" onclick="switchTab('ranking')">🏆 Ranking Histórico</button>
+    <button class="tab-btn" onclick="switchTab('ranking')">🏆 Ranking Leyendas</button>
 </div>
 
 <div class="container">
@@ -477,17 +523,17 @@
     <div id="sec-bolsa" class="section active">
         <div class="convocatoria-bar">
             <div class="counter-badge">
-                Convocados para el partido: <span id="selectedCount">0</span>
+                Convocados para hoy: <span id="selectedCount">0</span>
             </div>
             <div class="bar-actions">
                 <button class="btn btn-outline" onclick="toggleSelectAll()">Seleccionar Todos / Ninguno</button>
-                <button class="btn btn-secondary" onclick="openCreateModal()">+ Nuevo Jugador</button>
+                <button class="btn btn-secondary" onclick="openCreateModal()">+ Nuevo Fichaje</button>
                 <button class="btn" id="btnGenerar" onclick="generateBalancedTeams()">⚖️ Generar Equipos</button>
             </div>
         </div>
 
         <div class="toolbar">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar jugador por nombre..." oninput="renderPlayers()">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar veterano..." oninput="renderPlayers()">
             <select id="filterPos" onchange="renderPlayers()">
                 <option value="ALL">Todas las posiciones</option>
                 <option value="POR">🧤 Porteros (POR)</option>
@@ -497,16 +543,16 @@
             </select>
         </div>
 
-        <div id="loadingState" class="status-msg">🔄 Sincronizando bolsa de jugadores con Google Sheets...</div>
+        <div id="loadingState" class="status-msg">🔄 Cargando plantilla desde Google Sheets...</div>
         <div id="playersGrid" class="players-grid"></div>
     </div>
 
-    <!-- SECCIÓN 2: EQUIPOS DEL PARTIDO -->
+    <!-- SECCIÓN 2: PARTIDO DEL FINDE -->
     <div id="sec-partido" class="section">
         <div class="convocatoria-bar">
             <div>
-                <strong>Acta del Partido en Curso</strong>
-                <p style="font-size: 0.85rem; color: var(--muted);">Apunta los goles de hoy y el MVP. Al terminar, pulsa "Finalizar y Guardar Acta".</p>
+                <strong>Acta del Partido de Veteranos</strong>
+                <p style="font-size: 0.85rem; color: var(--muted);">Apunta los goles y el MVP de hoy. Al terminar, guarda el acta.</p>
             </div>
             <div class="bar-actions">
                 <button class="btn btn-outline" onclick="shuffleAgain()">🎲 Re-sortear</button>
@@ -516,11 +562,10 @@
         </div>
 
         <div id="emptyMatchMsg" class="status-msg">
-            Todavía no has generado los equipos de hoy. Ve a <strong>Bolsa y Convocatoria</strong>, selecciona a los asistentes y pulsa "Generar Equipos".
+            Todavía no hay equipos generados. Ve a <strong>Bolsa y Convocatoria</strong> y pulsa "Generar Equipos".
         </div>
 
         <div id="matchActiveContent" style="display: none;">
-            <!-- MARCADOR EN VIVO DEL PARTIDO -->
             <div class="scoreboard">
                 <div class="score-team" style="color: var(--danger);">🔴 EQUIPO A</div>
                 <div class="score-numbers">
@@ -549,17 +594,17 @@
         </div>
     </div>
 
-    <!-- SECCIÓN 3: RANKING HISTÓRICO -->
+    <!-- SECCIÓN 3: RANKING -->
     <div id="sec-ranking" class="section">
         <div style="overflow-x: auto;">
             <table class="stats-table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Jugador</th>
+                        <th>Veterano</th>
                         <th>Pos</th>
                         <th>Nivel</th>
-                        <th>⚽ Goles Totales</th>
+                        <th>⚽ Goles</th>
                         <th>⭐ MVPs</th>
                         <th>👟 Partidos</th>
                         <th>Acción</th>
@@ -572,13 +617,13 @@
 
 </div>
 
-<!-- MODAL PARA CREAR O EDITAR JUGADOR -->
+<!-- MODAL CREAR / EDITAR -->
 <div class="modal-overlay" id="playerModal">
     <div class="modal">
-        <h3 id="modalTitle">➕ Fichar Jugador en la Bolsa</h3>
+        <h3 id="modalTitle">➕ Fichar Veterano</h3>
         <div class="form-control">
             <label>Nombre o Apodo *</label>
-            <input type="text" id="newPlayerName" placeholder="Ej: Dani Carvajal">
+            <input type="text" id="newPlayerName" placeholder="Ej: Manolo el Lento">
         </div>
         <div class="form-control">
             <label>Nivel (1 a 10) *</label>
@@ -594,13 +639,13 @@
             </select>
         </div>
         <div class="form-control">
-            <label>Foto del Jugador (Opcional)</label>
+            <label>Foto (Opcional)</label>
             <input type="file" id="newPlayerPhoto" accept="image/*" onchange="handlePhotoUpload(event)">
             <div class="preview-box" id="photoPreviewBox" style="display: none;">
                 <img id="photoPreviewImg" src="" alt="Vista previa">
                 <div style="display:flex; flex-direction:column; gap:4px;">
                     <span style="font-size: 0.8rem; color: var(--primary);">✓ Foto lista</span>
-                    <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.7rem;" onclick="clearPhoto()">Quitar foto</button>
+                    <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.7rem;" onclick="clearPhoto()">Quitar</button>
                 </div>
             </div>
         </div>
@@ -618,13 +663,10 @@
     let selectedIds = new Set();
     let currentTeamA = [];
     let currentTeamB = [];
-
-    // Estado EXCLUSIVO del partido de hoy (empieza siempre a 0 al generar equipos)
-    let matchGoals = {}; // { playerId: golesHoy }
-    let matchMvpId = null; // ID del jugador MVP de hoy
+    let matchGoals = {};
+    let matchMvpId = null;
     let matchSaved = false;
 
-    // Estado del modal (Crear vs Editar)
     let editingPlayerId = null;
     let compressedPhotoBase64 = '';
     let isUpdating = false;
@@ -649,35 +691,8 @@
     }
 
     function getAvatar(player) {
-        if (player.foto && player.foto.trim() !== '') {
-            return player.foto;
-        }
-        const encodedName = encodeURIComponent(player.nombre || 'J');
-        return `https://ui-avatars.com/api/?name=${encodedName}&background=0D8ABC&color=fff&bold=true`;
-    }
-
-    function buildFullRowPayload(player) {
-        return {
-            id: String(player.id),
-            nombre: String(player.nombre),
-            nivel: Number(player.nivel),
-            posicion: String(player.posicion || 'MED'),
-            foto: player.foto || '',
-            goles: Number(player.goles || 0),
-            mvp: Number(player.mvp || 0),
-            partidos: Number(player.partidos || 0)
-        };
-    }
-
-    async function syncPlayerToCloud(player) {
-        const response = await fetch(`${API_URL}/id/${encodeURIComponent(player.id)}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: buildFullRowPayload(player) })
-        });
-        if (!response.ok) {
-            throw new Error('Error actualizando fila en SheetDB');
-        }
+        if (player.foto && player.foto.trim() !== '') return player.foto;
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(player.nombre || 'J')}&background=166534&color=facc15&bold=true`;
     }
 
     async function fetchPlayers() {
@@ -688,9 +703,9 @@
             const data = await res.json();
 
             players = (Array.isArray(data) ? data : [])
-                .filter(p => (p.nombre && String(p.nombre).trim() !== '') || (p.name && String(p.name).trim() !== ''))
+                .filter(p => p.id && (p.nombre || p.name))
                 .map((p, idx) => ({
-                    id: String(p.id || (Date.now() + idx)),
+                    id: String(p.id),
                     nombre: String(p.nombre || p.name).trim(),
                     nivel: Number(p.nivel || p.level || 5),
                     posicion: String(p.posicion || 'MED').toUpperCase(),
@@ -703,7 +718,7 @@
             loading.style.display = 'none';
             renderPlayers();
         } catch (err) {
-            loading.innerHTML = '❌ Error al conectar con SheetDB. Verifica tu conexión.';
+            loading.innerHTML = '❌ Error al conectar con Google Sheets.';
             console.error(err);
         }
     }
@@ -714,11 +729,8 @@
         const posFilter = document.getElementById('filterPos').value;
 
         grid.innerHTML = '';
-
         const filtered = players.filter(p => {
-            const matchName = p.nombre.toLowerCase().includes(search);
-            const matchPos = posFilter === 'ALL' || p.posicion === posFilter;
-            return matchName && matchPos;
+            return p.nombre.toLowerCase().includes(search) && (posFilter === 'ALL' || p.posicion === posFilter);
         });
 
         filtered.forEach(p => {
@@ -752,50 +764,34 @@
             `;
             grid.appendChild(card);
         });
-
         document.getElementById('selectedCount').innerText = selectedIds.size;
     }
 
     function togglePlayerSelection(id) {
-        if (selectedIds.has(id)) {
-            selectedIds.delete(id);
-        } else {
-            selectedIds.add(id);
-        }
+        if (selectedIds.has(id)) selectedIds.delete(id);
+        else selectedIds.add(id);
         renderPlayers();
     }
 
     function toggleSelectAll() {
-        if (selectedIds.size === players.length) {
-            selectedIds.clear();
-        } else {
-            players.forEach(p => selectedIds.add(p.id));
-        }
+        if (selectedIds.size === players.length) selectedIds.clear();
+        else players.forEach(p => selectedIds.add(p.id));
         renderPlayers();
     }
 
-    // Subida y compresión de foto
     function handlePhotoUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                const MAX_SIZE = 90;
-                canvas.width = MAX_SIZE;
-                canvas.height = MAX_SIZE;
+                canvas.width = 90; canvas.height = 90;
                 const ctx = canvas.getContext('2d');
-
                 const minSide = Math.min(img.width, img.height);
-                const sx = (img.width - minSide) / 2;
-                const sy = (img.height - minSide) / 2;
-
-                ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, MAX_SIZE, MAX_SIZE);
+                ctx.drawImage(img, (img.width - minSide)/2, (img.height - minSide)/2, minSide, minSide, 0, 0, 90, 90);
                 compressedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
-
                 document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
                 document.getElementById('photoPreviewBox').style.display = 'flex';
             };
@@ -810,10 +806,9 @@
         document.getElementById('photoPreviewBox').style.display = 'none';
     }
 
-    // Abrir Modal para NUEVO jugador
     function openCreateModal() {
         editingPlayerId = null;
-        document.getElementById('modalTitle').innerText = '➕ Fichar Jugador en la Bolsa';
+        document.getElementById('modalTitle').innerText = '➕ Fichar Veterano';
         document.getElementById('newPlayerName').value = '';
         document.getElementById('newPlayerLevel').value = '7';
         document.getElementById('newPlayerPos').value = 'MED';
@@ -823,18 +818,15 @@
         document.getElementById('playerModal').classList.add('open');
     }
 
-    // Abrir Modal para EDITAR jugador existente (mantiene sus estadísticas intactas)
     function openEditModal(id) {
         const player = players.find(p => p.id === id);
         if (!player) return;
-
         editingPlayerId = id;
         document.getElementById('modalTitle').innerText = `✏️ Editar a ${player.nombre}`;
         document.getElementById('newPlayerName').value = player.nombre;
         document.getElementById('newPlayerLevel').value = player.nivel;
         document.getElementById('newPlayerPos').value = player.posicion || 'MED';
         document.getElementById('newPlayerPhoto').value = '';
-
         compressedPhotoBase64 = player.foto || '';
         if (compressedPhotoBase64) {
             document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
@@ -842,7 +834,6 @@
         } else {
             document.getElementById('photoPreviewBox').style.display = 'none';
         }
-
         document.getElementById('playerModal').classList.add('open');
     }
 
@@ -850,7 +841,7 @@
         document.getElementById('playerModal').classList.remove('open');
     }
 
-    // Guardar (Crear o Editar) jugador en Google Sheets
+    // MÉTODO BLINDADO DE GUARDADO: Borra la fila vieja y añade la nueva limpia para evitar que Google Sheets corrompa datos
     async function savePlayerForm() {
         const nameInput = document.getElementById('newPlayerName');
         const levelInput = document.getElementById('newPlayerLevel');
@@ -862,32 +853,30 @@
         const posicion = posInput.value;
 
         if (!nombre || nivel < 1 || nivel > 10) {
-            alert('Por favor, introduce un nombre válido y un nivel del 1 al 10.');
-            return;
-        }
-
-        // Verificar duplicados de nombre
-        const duplicate = players.find(p => p.nombre.toLowerCase() === nombre.toLowerCase() && p.id !== editingPlayerId);
-        if (duplicate) {
-            alert('Ya existe otro jugador con ese nombre en la bolsa.');
+            alert('Introduce un nombre válido y nivel del 1 al 10.');
             return;
         }
 
         btn.disabled = true;
-        btn.innerText = 'Guardando...';
+        btn.innerText = 'Guardando en la nube...';
 
         try {
             if (editingPlayerId) {
-                // MODO EDICIÓN: Conserva goles, mvp y partidos históricos
+                // Editar: Mantenemos stats anteriores, actualizamos datos y resubimos fila limpia
                 const player = players.find(p => p.id === editingPlayerId);
                 player.nombre = nombre;
                 player.nivel = nivel;
                 player.posicion = posicion;
                 player.foto = compressedPhotoBase64 || '';
 
-                await syncPlayerToCloud(player);
+                await fetch(`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`, { method: 'DELETE' });
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: [player] })
+                });
             } else {
-                // MODO CREACIÓN
+                // Crear nuevo
                 const newPlayer = {
                     id: String(Date.now()),
                     nombre: nombre,
@@ -898,26 +887,19 @@
                     mvp: 0,
                     partidos: 0
                 };
-
-                const res = await fetch(API_URL, {
+                await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [buildFullRowPayload(newPlayer)] })
+                    body: JSON.stringify({ data: [newPlayer] })
                 });
-                if (!res.ok) throw new Error('Error creando fila en SheetDB');
-
                 players.push(newPlayer);
                 selectedIds.add(newPlayer.id);
             }
 
+            await fetchPlayers();
             closeModal();
-            renderPlayers();
-            if (currentTeamA.length > 0 || currentTeamB.length > 0) {
-                renderMatchTeams();
-            }
-            renderRanking();
         } catch (err) {
-            alert('Error guardando en Google Sheets. Verifica tu conexión.');
+            alert('Error al guardar en Google Sheets.');
             console.error(err);
         } finally {
             btn.disabled = false;
@@ -927,94 +909,63 @@
 
     async function deletePlayer(id) {
         const player = players.find(p => p.id === id);
-        if (!player) return;
-        if (!confirm(`¿Seguro que quieres eliminar a ${player.nombre} de la bolsa?`)) return;
-
+        if (!player || !confirm(`¿Eliminar a ${player.nombre}?`)) return;
         try {
-            await fetch(`${API_URL}/id/${encodeURIComponent(id)}`, {
-                method: 'DELETE'
-            });
+            await fetch(`${API_URL}/id/${encodeURIComponent(id)}`, { method: 'DELETE' });
             players = players.filter(p => p.id !== id);
             selectedIds.delete(id);
             renderPlayers();
         } catch (err) {
-            alert('No se pudo eliminar de la hoja.');
+            alert('No se pudo eliminar.');
         }
     }
 
-    // Generar equipos e inicializar el marcador del partido de hoy a 0
     function generateBalancedTeams(allowVariation = false) {
         const convocated = players.filter(p => selectedIds.has(p.id));
-
         if (convocated.length < 2) {
-            alert('Selecciona al menos 2 jugadores en la Bolsa para armar los equipos.');
+            alert('Selecciona al menos 2 veteranos convocados.');
             return;
         }
 
         const posOrder = { 'POR': 1, 'DEF': 2, 'MED': 3, 'DEL': 4 };
-
         const sorted = [...convocated].sort((a, b) => {
-            if (posOrder[a.posicion] !== posOrder[b.posicion]) {
-                return posOrder[a.posicion] - posOrder[b.posicion];
-            }
+            if (posOrder[a.posicion] !== posOrder[b.posicion]) return posOrder[a.posicion] - posOrder[b.posicion];
             const noise = allowVariation ? (Math.random() - 0.5) * 1.5 : 0;
             return (b.nivel + noise) - a.nivel;
         });
 
-        currentTeamA = [];
-        currentTeamB = [];
-        let sumA = 0;
-        let sumB = 0;
+        currentTeamA = []; currentTeamB = [];
+        let sumA = 0, sumB = 0;
 
         sorted.forEach(player => {
-            if (currentTeamA.length < currentTeamB.length) {
-                currentTeamA.push(player);
-                sumA += player.nivel;
-            } else if (currentTeamB.length < currentTeamA.length) {
-                currentTeamB.push(player);
-                sumB += player.nivel;
-            } else {
-                if (sumA <= sumB) {
-                    currentTeamA.push(player);
-                    sumA += player.nivel;
-                } else {
-                    currentTeamB.push(player);
-                    sumB += player.nivel;
-                }
+            if (currentTeamA.length < currentTeamB.length) { currentTeamA.push(player); sumA += player.nivel; }
+            else if (currentTeamB.length < currentTeamA.length) { currentTeamB.push(player); sumB += player.nivel; }
+            else {
+                if (sumA <= sumB) { currentTeamA.push(player); sumA += player.nivel; }
+                else { currentTeamB.push(player); sumB += player.nivel; }
             }
         });
 
-        // Reiniciar goles y MVP del partido actual a 0
         matchGoals = {};
         convocated.forEach(p => { matchGoals[p.id] = 0; });
         matchMvpId = null;
         matchSaved = false;
 
-        const btnRecord = document.getElementById('btnRecordMatch');
-        btnRecord.disabled = false;
-        btnRecord.innerText = '🏁 Finalizar y Guardar Acta';
+        document.getElementById('btnRecordMatch').disabled = false;
+        document.getElementById('btnRecordMatch').innerText = '🏁 Finalizar y Guardar Acta';
 
         renderMatchTeams();
         switchTab('partido');
     }
 
-    function shuffleAgain() {
-        generateBalancedTeams(true);
-    }
+    function shuffleAgain() { generateBalancedTeams(true); }
 
-    // Cambiar goles del partido de HOY (+1 o -1)
     function changeMatchGoal(playerId, delta) {
-        if (matchSaved) {
-            alert('El acta de este partido ya fue guardada. Genera un nuevo partido si quieres anotar otro.');
-            return;
-        }
-        const current = matchGoals[playerId] || 0;
-        const updated = Math.max(0, current + delta);
-        matchGoals[playerId] = updated;
+        if (matchSaved) return;
+        matchGoals[playerId] = Math.max(0, (matchGoals[playerId] || 0) + delta);
         renderMatchTeams();
     }
 
-    // Marcar o desmarcar el MVP del partido de HOY
     function toggleMatchMvp(playerId) {
         if (matchSaved) return;
         matchMvpId = (matchMvpId === playerId) ? null : playerId;
@@ -1033,19 +984,13 @@
         document.getElementById('avgTeamA').innerText = (sumA / (currentTeamA.length || 1)).toFixed(1);
         document.getElementById('avgTeamB').innerText = (sumB / (currentTeamB.length || 1)).toFixed(1);
 
-        // Calcular resultado del partido de hoy en vivo
-        const goalsTeamA = currentTeamA.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
-        const goalsTeamB = currentTeamB.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
-        document.getElementById('scoreGoalsA').innerText = goalsTeamA;
-        document.getElementById('scoreGoalsB').innerText = goalsTeamB;
+        document.getElementById('scoreGoalsA').innerText = currentTeamA.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
+        document.getElementById('scoreGoalsB').innerText = currentTeamB.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
 
         const renderList = (team, containerId) => {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             team.forEach(p => {
-                const todayGoals = matchGoals[p.id] || 0;
-                const isMvp = (matchMvpId === p.id);
-
                 const row = document.createElement('div');
                 row.className = 'team-player-row';
                 row.innerHTML = `
@@ -1054,38 +999,30 @@
                         <div style="min-width:0;">
                             <strong style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.nombre}</strong>
                             <div style="font-size: 0.75rem; color: var(--muted);">
-                                <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span>
-                                Niv ${p.nivel}
+                                <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span> Niv ${p.nivel}
                             </div>
                         </div>
                     </div>
                     <div class="post-match-actions">
                         <div class="goal-control">
                             <button onclick="changeMatchGoal('${p.id}', -1)">-</button>
-                            <span>⚽ ${todayGoals}</span>
+                            <span>⚽ ${matchGoals[p.id] || 0}</span>
                             <button onclick="changeMatchGoal('${p.id}', 1)">+</button>
                         </div>
-                        <button class="mvp-btn ${isMvp ? 'active' : ''}" onclick="toggleMatchMvp('${p.id}')">
-                            ⭐ MVP
-                        </button>
+                        <button class="mvp-btn ${matchMvpId === p.id ? 'active' : ''}" onclick="toggleMatchMvp('${p.id}')">⭐ MVP</button>
                     </div>
                 `;
                 container.appendChild(row);
             });
         };
-
         renderList(currentTeamA, 'listTeamA');
         renderList(currentTeamB, 'listTeamB');
     }
 
-    // Guardar toda el acta del partido (Suma los goles de hoy, el MVP de hoy y +1 partido a cada convocado)
     async function finishAndSaveMatch() {
         const convocated = [...currentTeamA, ...currentTeamB];
         if (convocated.length === 0 || isUpdating || matchSaved) return;
-
-        const goalsA = document.getElementById('scoreGoalsA').innerText;
-        const goalsB = document.getElementById('scoreGoalsB').innerText;
-        if (!confirm(`¿Guardar acta del partido (Equipo A ${goalsA} - ${goalsB} Equipo B)?\nSe sumará +1 partido jugado, los goles de hoy y el MVP en Google Sheets.`)) return;
+        if (!confirm('¿Guardar acta del partido y actualizar estadísticas de los veteranos?')) return;
 
         isUpdating = true;
         const btn = document.getElementById('btnRecordMatch');
@@ -1094,25 +1031,27 @@
         try {
             for (let i = 0; i < convocated.length; i++) {
                 const p = convocated[i];
-                const gHoy = matchGoals[p.id] || 0;
-                const mvpHoy = (matchMvpId === p.id) ? 1 : 0;
+                p.partidos += 1;
+                p.goles += (matchGoals[p.id] || 0);
+                if (matchMvpId === p.id) p.mvp += 1;
 
-                p.partidos = Number(p.partidos || 0) + 1;
-                p.goles = Number(p.goles || 0) + gHoy;
-                p.mvp = Number(p.mvp || 0) + mvpHoy;
-
-                btn.innerText = `⏳ Guardando acta (${i + 1}/${convocated.length})...`;
-                await syncPlayerToCloud(p);
+                btn.innerText = `⏳ Guardando (${i + 1}/${convocated.length})...`;
+                // Recrear fila para evitar borrados
+                await fetch(`${API_URL}/id/${encodeURIComponent(p.id)}`, { method: 'DELETE' });
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: [p] })
+                });
             }
 
             matchSaved = true;
-            btn.innerText = '✅ Acta Guardada en la Nube';
-            renderPlayers();
+            btn.innerText = '✅ Acta Guardada';
+            await fetchPlayers();
             renderRanking();
-            alert('🏆 ¡Acta del partido guardada! Las estadísticas históricas ya están actualizadas.');
+            alert('🏆 ¡Acta guardada correctamente!');
         } catch (err) {
-            console.error(err);
-            alert('Hubo un error al guardar el acta en Google Sheets.');
+            alert('Error guardando el acta.');
             btn.disabled = false;
             btn.innerText = '🏁 Finalizar y Guardar Acta';
         } finally {
@@ -1122,49 +1061,31 @@
 
     function copyToWhatsApp() {
         if (currentTeamA.length === 0) return;
-
-        const avgA = document.getElementById('avgTeamA').innerText;
-        const avgB = document.getElementById('avgTeamB').innerText;
-
-        let text = `⚽ *CONVOCATORIA FUTMATCH PRO* ⚽\n\n`;
-        text += `🔴 *EQUIPO A (Media: ${avgA})*\n`;
+        let text = `⚽ *JOGO BONITO WALKING F.C.* ⚽\n*Convocatoria Veteranos*\n\n`;
+        text += `🔴 *Equipo A (Media: ${document.getElementById('avgTeamA').innerText})*\n`;
         currentTeamA.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
-
-        text += `\n🔵 *EQUIPO B (Media: ${avgB})*\n`;
+        text += `\n🔵 *Equipo B (Media: ${document.getElementById('avgTeamB').innerText})*\n`;
         currentTeamB.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
 
-        navigator.clipboard.writeText(text).then(() => {
-            alert('📲 ¡Convocatoria copiada! Ya puedes pegarla en tu grupo de WhatsApp.');
-        });
+        navigator.clipboard.writeText(text).then(() => alert('📲 ¡Copiado para WhatsApp!'));
     }
 
     function renderRanking() {
         const tbody = document.getElementById('rankingBody');
         tbody.innerHTML = '';
-
-        const sorted = [...players].sort((a, b) => {
-            if (b.goles !== a.goles) return b.goles - a.goles;
-            return b.mvp - a.mvp;
-        });
+        const sorted = [...players].sort((a, b) => b.goles - a.goles || b.mvp - a.mvp);
 
         sorted.forEach((p, index) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>#${index + 1}</strong></td>
-                <td>
-                    <div class="stats-player-cell">
-                        <img src="${getAvatar(p)}" alt="${p.nombre}">
-                        <span>${p.nombre}</span>
-                    </div>
-                </td>
+                <td><div class="stats-player-cell"><img src="${getAvatar(p)}" alt="${p.nombre}"><span>${p.nombre}</span></div></td>
                 <td><span class="pos-badge pos-${p.posicion}">${p.posicion}</span></td>
                 <td><strong>${p.nivel}</strong></td>
                 <td>⚽ ${p.goles}</td>
                 <td>⭐ ${p.mvp}</td>
                 <td>👟 ${p.partidos}</td>
-                <td>
-                    <button class="card-action-btn edit" style="padding:4px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button>
-                </td>
+                <td><button class="card-action-btn edit" style="padding:4px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button></td>
             `;
             tbody.appendChild(tr);
         });
