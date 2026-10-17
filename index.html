@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutMatch PRO 2.0 - Cloud Manager</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --card-hover: #334155;
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --accent: #3b82f6;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 60px;
+        }
+
+        /* HEADER & NAV */
+        header {
+            background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        header h1 { font-size: 1.8rem; letter-spacing: 0.5px; }
+        header h1 span { color: var(--primary); }
+        header p { color: var(--muted); font-size: 0.9rem; margin-top: 5px; }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: #162032;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid var(--border);
+        }
+        .tab-btn {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid transparent;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: #06281e;
+        }
+
+        .container { max-width: 960px; margin: 20px auto; padding: 0 16px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* STICKY CONVOCATORIA BAR */
+        .convocatoria-bar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4);
+        }
+        .counter-badge {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+        .counter-badge span {
+            background: var(--primary);
+            color: #06281e;
+            padding: 3px 10px;
+            border-radius: 999px;
+            margin-left: 6px;
+        }
+        .bar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        /* BUTTONS */
+        .btn {
+            background: var(--primary);
+            color: #052e16;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:hover { opacity: 0.92; }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+        .btn-secondary { background: var(--accent); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-warning { background: var(--warning); color: #451a03; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* SEARCH & FILTER */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .toolbar input, .toolbar select {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* PLAYER CARDS GRID (FIFA STYLE) */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 16px;
+        }
+        .player-card {
+            background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .player-card:hover { border-color: #64748b; transform: translateY(-2px); }
+        .player-card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(160deg, #064e3b 0%, #0f172a 100%);
+            box-shadow: 0 0 18px rgba(16, 185, 129, 0.3);
+        }
+        .card-top {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+        .rating-badge {
+            background: var(--warning);
+            color: #451a03;
+            font-weight: 900;
+            font-size: 1.2rem;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pos-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: #334155;
+            color: var(--text);
+        }
+        .pos-POR { background: #eab308; color: #422006; }
+        .pos-DEF { background: #3b82f6; color: white; }
+        .pos-MED { background: #10b981; color: #052e16; }
+        .pos-DEL { background: #ef4444; color: white; }
+
+        .avatar-wrapper {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--border);
+            margin-bottom: 10px;
+            background: #0f172a;
+        }
+        .player-card.selected .avatar-wrapper { border-color: var(--primary); }
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .player-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+        .player-mini-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 8px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .player-mini-stats div strong {
+            display: block;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .check-indicator {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary);
+            color: #052e16;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-weight: 900;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+        .player-card.selected .check-indicator { display: flex; }
+
+        .delete-player-btn {
+            margin-top: 8px;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .delete-player-btn:hover { color: var(--danger); }
+
+        /* TEAMS PITCH VIEW */
+        .teams-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .team-box {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 20px;
+            border-top: 5px solid var(--danger);
+        }
+        .team-box.team-b { border-top-color: var(--accent); }
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .team-player-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .team-player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .team-player-info img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .post-match-actions button {
+            padding: 5px 8px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        /* TABLE STATS */
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .stats-table th, .stats-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .stats-table th { background: #0f172a; color: var(--muted); font-size: 0.85rem; }
+        .stats-player-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .stats-player-cell img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 16px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            max-width: 420px;
+            width: 100%;
+            padding: 24px;
+        }
+        .modal h3 { margin-bottom: 16px; }
+        .form-control { margin-bottom: 14px; }
+        .form-control label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 5px; }
+        .form-control input, .form-control select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #0f172a;
+            color: var(--text);
+        }
+        .preview-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .preview-box img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .status-msg {
+            text-align: center;
+            padding: 30px;
+            color: var(--muted);
+        }
+
+        @media (max-width: 700px) {
+            .teams-grid { grid-template-columns: 1fr; }
+            .convocatoria-bar { flex-direction: column; align-items: stretch; text-align: center; }
+            .bar-actions { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚽ FutMatch <span>PRO 2.0</span></h1>
+    <p>Bolsa de Jugadores, Convocatorias y Equilibrio Inteligente en la Nube</p>
+</header>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('bolsa')">📋 Bolsa y Convocatoria</button>
+    <button class="tab-btn" onclick="switchTab('partido')">⚖️ Equipos del Finde</button>
+    <button class="tab-btn" onclick="switchTab('ranking')">🏆 Ranking Histórico</button>
+</div>
+
+<div class="container">
+
+    <!-- SECCIÓN 1: BOLSA DE JUGADORES -->
+    <div id="sec-bolsa" class="section active">
+        <div class="convocatoria-bar">
+            <div class="counter-badge">
+                Convocados para el partido: <span id="selectedCount">0</span>
+            </div>
+            <div class="bar-actions">
+                <button class="btn btn-outline" onclick="toggleSelectAll()">Seleccionar Todos / Ninguno</button>
+                <button class="btn btn-secondary" onclick="openModal()">+ Nuevo Jugador</button>
+                <button class="btn" id="btnGenerar" onclick="generateBalancedTeams()">⚖️ Generar Equipos</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar jugador por nombre..." oninput="renderPlayers()">
+            <select id="filterPos" onchange="renderPlayers()">
+                <option value="ALL">Todas las posiciones</option>
+                <option value="POR">🧤 Porteros (POR)</option>
+                <option value="DEF">🛡️ Defensas (DEF)</option>
+                <option value="MED">🎯 Medios (MED)</option>
+                <option value="DEL">⚡ Delanteros (DEL)</option>
+            </select>
+        </div>
+
+        <div id="loadingState" class="status-msg">🔄 Sincronizando bolsa de jugadores con Google Sheets...</div>
+        <div id="playersGrid" class="players-grid"></div>
+    </div>
+
+    <!-- SECCIÓN 2: EQUIPOS DEL PARTIDO -->
+    <div id="sec-partido" class="section">
+        <div class="convocatoria-bar">
+            <div>
+                <strong>Resultado del Sorteo Inteligente</strong>
+                <p style="font-size: 0.85rem; color: var(--muted);">Equilibrado por media de nivel y reparto de posiciones</p>
+            </div>
+            <div class="bar-actions">
+                <button class="btn btn-outline" onclick="shuffleAgain()">🎲 Re-sortear</button>
+                <button class="btn" onclick="copyToWhatsApp()">📲 Copiar para WhatsApp</button>
+                <button class="btn btn-warning" onclick="recordMatchPlayed()">✅ Sumar +1 Partido a Todos</button>
+            </div>
+        </div>
+
+        <div id="emptyMatchMsg" class="status-msg">
+            Todavía no has generado los equipos. Ve a la pestaña <strong>Bolsa y Convocatoria</strong>, selecciona a los jugadores que vienen este finde y pulsa "Generar Equipos".
+        </div>
+
+        <div id="teamsContainer" class="teams-grid" style="display: none;">
+            <div class="team-box">
+                <div class="team-header">
+                    <h3 style="color: var(--danger);">🔴 Equipo A</h3>
+                    <span>Media: <strong id="avgTeamA">0.0</strong> | Total: <span id="sumTeamA">0</span></span>
+                </div>
+                <div id="listTeamA"></div>
+            </div>
+
+            <div class="team-box team-b">
+                <div class="team-header">
+                    <h3 style="color: var(--accent);">🔵 Equipo B</h3>
+                    <span>Media: <strong id="avgTeamB">0.0</strong> | Total: <span id="sumTeamB">0</span></span>
+                </div>
+                <div id="listTeamB"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3: RANKING HISTÓRICO -->
+    <div id="sec-ranking" class="section">
+        <div style="overflow-x: auto;">
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Jugador</th>
+                        <th>Pos</th>
+                        <th>Nivel</th>
+                        <th>⚽ Goles</th>
+                        <th>⭐ MVPs</th>
+                        <th>👟 Partidos</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL PARA AÑADIR JUGADOR A LA BOLSA -->
+<div class="modal-overlay" id="playerModal">
+    <div class="modal">
+        <h3>➕ Fichar Jugador en la Bolsa</h3>
+        <div class="form-control">
+            <label>Nombre o Apodo *</label>
+            <input type="text" id="newPlayerName" placeholder="Ej: Dani Carvajal">
+        </div>
+        <div class="form-control">
+            <label>Nivel (1 a 10) *</label>
+            <input type="number" id="newPlayerLevel" min="1" max="10" value="7">
+        </div>
+        <div class="form-control">
+            <label>Posición Principal</label>
+            <select id="newPlayerPos">
+                <option value="MED">🎯 Centrocampista (MED)</option>
+                <option value="DEF">🛡️ Defensa (DEF)</option>
+                <option value="DEL">⚡ Delantero (DEL)</option>
+                <option value="POR">🧤 Portero (POR)</option>
+            </select>
+        </div>
+        <div class="form-control">
+            <label>Foto del Jugador (Opcional - Se comprime y guarda en tu Sheet)</label>
+            <input type="file" id="newPlayerPhoto" accept="image/*" onchange="handlePhotoUpload(event)">
+            <div class="preview-box" id="photoPreviewBox" style="display: none;">
+                <img id="photoPreviewImg" src="" alt="Vista previa">
+                <span style="font-size: 0.8rem; color: var(--primary);">✓ Foto comprimida lista para Google Sheets</span>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+            <button class="btn" id="savePlayerBtn" onclick="saveNewPlayer()">Guardar en la Nube</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // URL DE TU SHEETDB
+    const API_URL = 'https://sheetdb.io/api/v1/rx0tzvfprheyf';
+
+    let players = [];
+    let selectedIds = new Set();
+    let currentTeamA = [];
+    let currentTeamB = [];
+    let compressedPhotoBase64 = '';
+
+    // Inicializar al abrir la web
+    window.addEventListener('DOMContentLoaded', fetchPlayers);
+
+    // Cambiar de pestaña
+    function switchTab(tab) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        if (tab === 'bolsa') {
+            document.getElementById('sec-bolsa').classList.add('active');
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        } else if (tab === 'partido') {
+            document.getElementById('sec-partido').classList.add('active');
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        } else if (tab === 'ranking') {
+            renderRanking();
+            document.getElementById('sec-ranking').classList.add('active');
+            document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        }
+    }
+
+    // Obtener avatar por defecto si no tiene foto subida
+    function getAvatar(player) {
+        if (player.foto && player.foto.trim() !== '') {
+            return player.foto;
+        }
+        const encodedName = encodeURIComponent(player.nombre || 'Jugador');
+        return `https://ui-avatars.com/api/?name=${encodedName}&background=0D8ABC&color=fff&bold=true`;
+    }
+
+    // Cargar jugadores desde Google Sheets (SheetDB)
+    async function fetchPlayers() {
+        const loading = document.getElementById('loadingState');
+        loading.style.display = 'block';
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+
+            players = (Array.isArray(data) ? data : []).map((p, idx) => ({
+                id: p.id || String(idx + 1),
+                nombre: p.nombre || p.name || 'Sin nombre',
+                nivel: Number(p.nivel || p.level || 5),
+                posicion: p.posicion || 'MED',
+                foto: p.foto || '',
+                goles: Number(p.goles || 0),
+                mvp: Number(p.mvp || 0),
+                partidos: Number(p.partidos || 0)
+            }));
+
+            loading.style.display = 'none';
+            renderPlayers();
+        } catch (err) {
+            loading.innerHTML = '❌ Error al conectar con SheetDB. Verifica tu conexión o URL.';
+            console.error(err);
+        }
+    }
+
+    // Dibujar tarjetas de la bolsa de jugadores
+    function renderPlayers() {
+        const grid = document.getElementById('playersGrid');
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const posFilter = document.getElementById('filterPos').value;
+
+        grid.innerHTML = '';
+
+        const filtered = players.filter(p => {
+            const matchName = p.nombre.toLowerCase().includes(search);
+            const matchPos = posFilter === 'ALL' || p.posicion === posFilter;
+            return matchName && matchPos;
+        });
+
+        filtered.forEach(p => {
+            const isSelected = selectedIds.has(p.nombre);
+            const card = document.createElement('div');
+            card.className = `player-card ${isSelected ? 'selected' : ''}`;
+            card.onclick = (e) => {
+                if (e.target.classList.contains('delete-player-btn')) return;
+                togglePlayerSelection(p.nombre);
+            };
+
+            card.innerHTML = `
+                <div class="check-indicator">✓</div>
+                <div class="card-top">
+                    <div class="rating-badge">${p.nivel}</div>
+                    <span class="pos-badge pos-${p.posicion}">${p.posicion}</span>
+                </div>
+                <div class="avatar-wrapper">
+                    <img src="${getAvatar(p)}" alt="${p.nombre}">
+                </div>
+                <div class="player-name" title="${p.nombre}">${p.nombre}</div>
+                <div class="player-mini-stats">
+                    <div><strong>${p.goles}</strong>Goles</div>
+                    <div><strong>${p.mvp}</strong>MVPs</div>
+                    <div><strong>${p.partidos}</strong>PJ</div>
+                </div>
+                <button class="delete-player-btn" onclick="deletePlayer('${p.nombre}')">🗑️ Eliminar</button>
+            `;
+            grid.appendChild(card);
+        });
+
+        document.getElementById('selectedCount').innerText = selectedIds.size;
+    }
+
+    // Seleccionar / Deseleccionar jugador para el finde
+    function togglePlayerSelection(nombre) {
+        if (selectedIds.has(nombre)) {
+            selectedIds.delete(nombre);
+        } else {
+            selectedIds.add(nombre);
+        }
+        renderPlayers();
+    }
+
+    function toggleSelectAll() {
+        if (selectedIds.size === players.length) {
+            selectedIds.clear();
+        } else {
+            players.forEach(p => selectedIds.add(p.nombre));
+        }
+        renderPlayers();
+    }
+
+    // Comprimir foto con HTML5 Canvas para que quepa en una celda de Google Sheets (< 50.000 chars)
+    function handlePhotoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_SIZE = 110; // 110x110px ocupa solo ~4KB en texto Base64
+                canvas.width = MAX_SIZE;
+                canvas.height = MAX_SIZE;
+                const ctx = canvas.getContext('2d');
+
+                // Recorte cuadrado centrado
+                const minSide = Math.min(img.width, img.height);
+                const sx = (img.width - minSide) / 2;
+                const sy = (img.height - minSide) / 2;
+
+                ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, MAX_SIZE, MAX_SIZE);
+                compressedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.65);
+
+                document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
+                document.getElementById('photoPreviewBox').style.display = 'flex';
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Guardar nuevo jugador en SheetDB
+    async function saveNewPlayer() {
+        const nameInput = document.getElementById('newPlayerName');
+        const levelInput = document.getElementById('newPlayerLevel');
+        const posInput = document.getElementById('newPlayerPos');
+        const btn = document.getElementById('savePlayerBtn');
+
+        const nombre = nameInput.value.trim();
+        const nivel = Number(levelInput.value);
+        const posicion = posInput.value;
+
+        if (!nombre || nivel < 1 || nivel > 10) {
+            alert('Por favor, introduce un nombre válido y un nivel del 1 al 10.');
+            return;
+        }
+
+        if (players.some(p => p.nombre.toLowerCase() === nombre.toLowerCase())) {
+            alert('Ya existe un jugador con ese nombre en la bolsa.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = 'Guardando...';
+
+        const newPlayer = {
+            id: Date.now().toString(),
+            nombre: nombre,
+            nivel: nivel,
+            posicion: posicion,
+            foto: compressedPhotoBase64 || '',
+            goles: 0,
+            mvp: 0,
+            partidos: 0
+        };
+
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: [newPlayer] })
+            });
+
+            players.push(newPlayer);
+            selectedIds.add(newPlayer.nombre); // Se convoca automáticamente
+            closeModal();
+            renderPlayers();
+        } catch (err) {
+            alert('Error guardando el jugador en Google Sheets.');
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Guardar en la Nube';
+        }
+    }
+
+    // Eliminar jugador de Google Sheets
+    async function deletePlayer(nombre) {
+        if (!confirm(`¿Seguro que quieres eliminar a ${nombre} de la bolsa de jugadores?`)) return;
+        try {
+            await fetch(`${API_URL}/nombre/${encodeURIComponent(nombre)}`, {
+                method: 'DELETE'
+            });
+            players = players.filter(p => p.nombre !== nombre);
+            selectedIds.delete(nombre);
+            renderPlayers();
+        } catch (err) {
+            alert('No se pudo eliminar de la hoja.');
+        }
+    }
+
+    // Algoritmo de Equilibrio Inteligente (Por Posición y Nivel)
+    function generateBalancedTeams(allowVariation = false) {
+        const convocated = players.filter(p => selectedIds.has(p.nombre));
+
+        if (convocated.length < 2) {
+            alert('Selecciona al menos 2 jugadores en la Bolsa para armar los equipos.');
+            return;
+        }
+
+        // Orden de prioridad por posiciones para repartirlas equitativamente
+        const posOrder = { 'POR': 1, 'DEF': 2, 'MED': 3, 'DEL': 4 };
+
+        const sorted = [...convocated].sort((a, b) => {
+            if (posOrder[a.posicion] !== posOrder[b.posicion]) {
+                return posOrder[a.posicion] - posOrder[b.posicion];
+            }
+            const noise = allowVariation ? (Math.random() - 0.5) * 1.5 : 0;
+            return (b.nivel + noise) - a.nivel;
+        });
+
+        currentTeamA = [];
+        currentTeamB = [];
+        let sumA = 0;
+        let sumB = 0;
+
+        sorted.forEach(player => {
+            if (currentTeamA.length < currentTeamB.length) {
+                currentTeamA.push(player);
+                sumA += player.nivel;
+            } else if (currentTeamB.length < currentTeamA.length) {
+                currentTeamB.push(player);
+                sumB += player.nivel;
+            } else {
+                if (sumA <= sumB) {
+                    currentTeamA.push(player);
+                    sumA += player.nivel;
+                } else {
+                    currentTeamB.push(player);
+                    sumB += player.nivel;
+                }
+            }
+        });
+
+        renderMatchTeams();
+        switchTab('partido');
+    }
+
+    function shuffleAgain() {
+        generateBalancedTeams(true);
+    }
+
+    function renderMatchTeams() {
+        document.getElementById('emptyMatchMsg').style.display = 'none';
+        document.getElementById('teamsContainer').style.display = 'grid';
+
+        const sumA = currentTeamA.reduce((acc, p) => acc + p.nivel, 0);
+        const sumB = currentTeamB.reduce((acc, p) => acc + p.nivel, 0);
+
+        document.getElementById('sumTeamA').innerText = sumA;
+        document.getElementById('sumTeamB').innerText = sumB;
+        document.getElementById('avgTeamA').innerText = (sumA / (currentTeamA.length || 1)).toFixed(1);
+        document.getElementById('avgTeamB').innerText = (sumB / (currentTeamB.length || 1)).toFixed(1);
+
+        const renderList = (team, containerId) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            team.forEach(p => {
+                const row = document.createElement('div');
+                row.className = 'team-player-row';
+                row.innerHTML = `
+                    <div class="team-player-info">
+                        <img src="${getAvatar(p)}" alt="${p.nombre}">
+                        <div>
+                            <strong>${p.nombre}</strong>
+                            <div style="font-size: 0.75rem; color: var(--muted);">
+                                <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span>
+                                Nivel ${p.nivel}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-match-actions">
+                        <button style="background: var(--primary); color:#052e16;" onclick="addStat('${p.nombre}', 'goles')">+1 ⚽ (${p.goles})</button>
+                        <button style="background: var(--warning); color:#451a03;" onclick="addStat('${p.nombre}', 'mvp')">+1 ⭐ (${p.mvp})</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        };
+
+        renderList(currentTeamA, 'listTeamA');
+        renderList(currentTeamB, 'listTeamB');
+    }
+
+    // Actualizar Goles o MVP en Google Sheets
+    async function addStat(nombre, field) {
+        const player = players.find(p => p.nombre === nombre);
+        if (!player) return;
+
+        player[field] = Number(player[field] || 0) + 1;
+        renderMatchTeams();
+        renderPlayers();
+
+        try {
+            await fetch(`${API_URL}/nombre/${encodeURIComponent(nombre)}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: { [field]: player[field] } })
+            });
+        } catch (err) {
+            console.error('Error al actualizar estadística:', err);
+        }
+    }
+
+    // Sumar +1 partido jugado a todos los convocados
+    async function recordMatchPlayed() {
+        const convocated = [...currentTeamA, ...currentTeamB];
+        if (convocated.length === 0) return;
+        if (!confirm(`¿Sumar +1 partido jugado a los ${convocated.length} convocados en Google Sheets?`)) return;
+
+        for (const p of convocated) {
+            p.partidos = Number(p.partidos || 0) + 1;
+            fetch(`${API_URL}/nombre/${encodeURIComponent(p.nombre)}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: { partidos: p.partidos } })
+            });
+        }
+        renderPlayers();
+        alert('✅ ¡Partidos actualizados en el historial!');
+    }
+
+    // Copiar alineación formateada para WhatsApp
+    function copyToWhatsApp() {
+        if (currentTeamA.length === 0) return;
+
+        const avgA = document.getElementById('avgTeamA').innerText;
+        const avgB = document.getElementById('avgTeamB').innerText;
+
+        let text = `⚽ *CONVOCATORIA FUTMATCH PRO* ⚽\n\n`;
+        text += `🔴 *EQUIPO A (Media: ${avgA})*\n`;
+        currentTeamA.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
+
+        text += `\n🔵 *EQUIPO B (Media: ${avgB})*\n`;
+        currentTeamB.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
+
+        navigator.clipboard.writeText(text).then(() => {
+            alert('📲 ¡Convocatoria copiada! Ya puedes pegarla en tu grupo de WhatsApp.');
+        });
+    }
+
+    // Renderizar tabla de Ranking Histórico
+    function renderRanking() {
+        const tbody = document.getElementById('rankingBody');
+        tbody.innerHTML = '';
+
+        const sorted = [...players].sort((a, b) => {
+            if (b.goles !== a.goles) return b.goles - a.goles;
+            return b.mvp - a.mvp;
+        });
+
+        sorted.forEach((p, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>#${index + 1}</strong></td>
+                <td>
+                    <div class="stats-player-cell">
+                        <img src="${getAvatar(p)}" alt="${p.nombre}">
+                        <span>${p.nombre}</span>
+                    </div>
+                </td>
+                <td><span class="pos-badge pos-${p.posicion}">${p.posicion}</span></td>
+                <td><strong>${p.nivel}</strong></td>
+                <td>⚽ ${p.goles}</td>
+                <td>⭐ ${p.mvp}</td>
+                <td>👟 ${p.partidos}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Control del Modal
+    function openModal() {
+        document.getElementById('newPlayerName').value = '';
+        document.getElementById('newPlayerLevel').value = '7';
+        document.getElementById('newPlayerPhoto').value = '';
+        document.getElementById('photoPreviewBox').style.display = 'none';
+        compressedPhotoBase64 = '';
+        document.getElementById('playerModal').classList.add('open');
+    }
+
+    function closeModal() {
+        document.getElementById('playerModal').classList.remove('open');
+    }
+</script>
+
+</body>
+</html>
