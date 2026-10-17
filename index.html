@@ -664,7 +664,6 @@
 
     let editingPlayerId = null;
     let compressedPhotoBase64 = '';
-    let isUpdating = false;
 
     window.addEventListener('DOMContentLoaded', fetchPlayers);
 
@@ -697,17 +696,18 @@
             const res = await fetch(API_URL);
             const data = await res.json();
 
+            // Filtramos estrictamente para que solo cargue filas que tengan un nombre válido
             players = (Array.isArray(data) ? data : [])
-                .filter(p => p.id && (p.nombre || p.name))
+                .filter(p => p.id && p.nombre && String(p.nombre).trim() !== '')
                 .map((p, idx) => ({
                     id: String(p.id),
-                    nombre: String(p.nombre || p.name).trim(),
-                    nivel: Number(p.nivel || p.level || 5),
+                    nombre: String(p.nombre).trim(),
+                    nivel: Number(p.nivel || 5),
                     posicion: String(p.posicion || 'MED').toUpperCase(),
                     foto: p.foto || '',
-                    goles: Number(p.goles || p.goals || 0),
-                    mvp: Number(p.mvp || p.mvps || 0),
-                    partidos: Number(p.partidos || p.matches || 0)
+                    goles: Number(p.goles || 0),
+                    mvp: Number(p.mvp || 0),
+                    partidos: Number(p.partidos || 0)
                 }));
 
             loading.style.display = 'none';
@@ -836,7 +836,7 @@
         document.getElementById('playerModal').classList.remove('open');
     }
 
-    // MÉTODO SEGURO: POST para crear y PATCH con los 8 campos para editar
+    // MÉTODO DE GUARDADO BLINDADO: Para asegurar que se registren todos los campos
     async function savePlayerForm() {
         const nameInput = document.getElementById('newPlayerName');
         const levelInput = document.getElementById('newPlayerLevel');
@@ -857,7 +857,6 @@
 
         try {
             if (editingPlayerId) {
-                // Editar jugador existente enviando todos sus datos por PATCH
                 const player = players.find(p => p.id === editingPlayerId);
                 player.nombre = nombre;
                 player.nivel = nivel;
@@ -870,7 +869,6 @@
                     body: JSON.stringify({ data: player })
                 });
             } else {
-                // Crear nuevo jugador con POST correcto
                 const newPlayer = {
                     id: String(Date.now()),
                     nombre: nombre,
@@ -886,8 +884,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ data: [newPlayer] })
                 });
-                players.push(newPlayer);
-                selectedIds.add(newPlayer.id);
             }
 
             await fetchPlayers();
@@ -1015,10 +1011,9 @@
 
     async function finishAndSaveMatch() {
         const convocated = [...currentTeamA, ...currentTeamB];
-        if (convocated.length === 0 || isUpdating || matchSaved) return;
+        if (convocated.length === 0 || matchSaved) return;
         if (!confirm('¿Guardar acta del partido y actualizar estadísticas de los veteranos?')) return;
 
-        isUpdating = true;
         const btn = document.getElementById('btnRecordMatch');
         btn.disabled = true;
 
@@ -1046,8 +1041,6 @@
             alert('Error guardando el acta.');
             btn.disabled = false;
             btn.innerText = '🏁 Finalizar y Guardar Acta';
-        } finally {
-            isUpdating = false;
         }
     }
 
