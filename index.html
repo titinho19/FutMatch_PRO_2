@@ -174,14 +174,14 @@
 
         .players-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 16px;
         }
         .player-card {
-            background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
+            border-radius: 16px;
+            padding: 14px;
             position: relative;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -194,7 +194,7 @@
         .player-card:hover { border-color: #64748b; transform: translateY(-2px); }
         .player-card.selected {
             border-color: var(--primary);
-            background: linear-gradient(160deg, #14532d 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #14532d 0%, #0f172a 100%);
             box-shadow: 0 0 18px rgba(250, 204, 21, 0.25);
         }
         .card-top {
@@ -202,19 +202,20 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .rating-badge {
-            background: var(--primary);
+            background: #d4af37;
             color: #0f172a;
             font-weight: 900;
-            font-size: 1.2rem;
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
+            font-size: 1.25rem;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         .pos-badge {
             font-size: 0.75rem;
@@ -230,15 +231,14 @@
         .pos-DEL { background: #ef4444; color: white; }
 
         .avatar-wrapper {
-            width: 82px;
-            height: 82px;
+            width: 74px;
+            height: 74px;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid var(--border);
-            margin-bottom: 10px;
+            border: 2px solid var(--primary);
+            margin-bottom: 6px;
             background: #0f172a;
         }
-        .player-card.selected .avatar-wrapper { border-color: var(--primary); }
         .avatar-wrapper img {
             width: 100%;
             height: 100%;
@@ -246,26 +246,44 @@
         }
         .player-name {
             font-weight: 700;
-            font-size: 1.05rem;
-            margin-bottom: 8px;
+            font-size: 1rem;
+            margin-bottom: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
         }
+
+        .fifa-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .fifa-stat-item span {
+            font-weight: 800;
+            color: var(--text);
+        }
+
         .player-mini-stats {
             display: flex;
             justify-content: space-around;
             width: 100%;
             border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 8px;
-            font-size: 0.8rem;
+            padding-top: 6px;
+            font-size: 0.75rem;
             color: var(--muted);
         }
         .player-mini-stats div strong {
             display: block;
             color: var(--text);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         .check-indicator {
             position: absolute;
@@ -286,10 +304,10 @@
 
         .card-footer-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
-            margin-top: 10px;
-            padding-top: 8px;
+            margin-top: 8px;
+            padding-top: 6px;
             border-top: 1px solid rgba(255,255,255,0.06);
         }
         .card-action-btn {
@@ -298,7 +316,7 @@
             border: 1px solid transparent;
             color: var(--muted);
             font-size: 0.75rem;
-            padding: 6px 4px;
+            padding: 5px 4px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
@@ -446,26 +464,34 @@
             justify-content: center;
             z-index: 100;
             padding: 16px;
+            overflow-y: auto;
         }
         .modal-overlay.open { display: flex; }
         .modal {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            max-width: 420px;
+            max-width: 440px;
             width: 100%;
             padding: 24px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal h3 { margin-bottom: 16px; color: var(--primary); }
-        .form-control { margin-bottom: 14px; }
-        .form-control label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 5px; }
+        .form-control { margin-bottom: 12px; }
+        .form-control label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
         .form-control input, .form-control select {
             width: 100%;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
             background: #0f172a;
             color: var(--text);
+        }
+        .fifa-inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
         }
         .preview-box {
             display: flex;
@@ -474,8 +500,8 @@
             margin-top: 8px;
         }
         .preview-box img {
-            width: 56px;
-            height: 56px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--primary);
@@ -526,7 +552,7 @@
             <div class="bar-actions">
                 <button class="btn btn-outline" onclick="toggleSelectAll()">Seleccionar Todos / Ninguno</button>
                 <button class="btn btn-secondary" onclick="openCreateModal()">+ Nuevo Fichaje</button>
-                <button class="btn" id="btnGenerar" onclick="generateBalancedTeams()">⚖️ Generar Equipos</button>
+                <button class="btn" id="btnGenerar" onclick="generateBalancedTeams()">⚖️ Generar Equipos FUT</button>
             </div>
         </div>
 
@@ -541,7 +567,7 @@
             </select>
         </div>
 
-        <div id="loadingState" class="status-msg">🔄 Cargando plantilla desde Google Sheets...</div>
+        <div id="loadingState" class="status-msg">🔄 Cargando plantilla Ultimate Team...</div>
         <div id="playersGrid" class="players-grid"></div>
     </div>
 
@@ -559,7 +585,7 @@
         </div>
 
         <div id="emptyMatchMsg" class="status-msg">
-            Todavía no hay equipos generados. Ve a <strong>Bolsa y Convocatoria</strong> y pulsa "Generar Equipos".
+            Todavía no hay equipos generados. Ve a <strong>Bolsa y Convocatoria</strong> y pulsa "Generar Equipos FUT".
         </div>
 
         <div id="matchActiveContent" style="display: none;">
@@ -575,7 +601,7 @@
                 <div class="team-box">
                     <div class="team-header">
                         <h3 style="color: var(--danger);">🔴 Equipo A</h3>
-                        <span>Media: <strong id="avgTeamA">0.0</strong> | Pts: <span id="sumTeamA">0</span></span>
+                        <span>Media FUT: <strong id="avgTeamA">0.0</strong> | Pts: <span id="sumTeamA">0</span></span>
                     </div>
                     <div id="listTeamA"></div>
                 </div>
@@ -583,7 +609,7 @@
                 <div class="team-box team-b">
                     <div class="team-header">
                         <h3 style="color: var(--accent);">🔵 Equipo B</h3>
-                        <span>Media: <strong id="avgTeamB">0.0</strong> | Pts: <span id="sumTeamB">0</span></span>
+                        <span>Media FUT: <strong id="avgTeamB">0.0</strong> | Pts: <span id="sumTeamB">0</span></span>
                     </div>
                     <div id="listTeamB"></div>
                 </div>
@@ -599,7 +625,7 @@
                         <th>#</th>
                         <th>Veterano</th>
                         <th>Pos</th>
-                        <th>Nivel</th>
+                        <th>OVR</th>
                         <th>⚽ Goles</th>
                         <th>⭐ MVPs</th>
                         <th>👟 Partidos</th>
@@ -613,16 +639,13 @@
 
 </div>
 
+<!-- MODAL CREAR / EDITAR CON ATRIBUTOS FIFA -->
 <div class="modal-overlay" id="playerModal">
     <div class="modal">
-        <h3 id="modalTitle">➕ Fichar Veterano</h3>
+        <h3 id="modalTitle">➕ Fichar Veterano FUT</h3>
         <div class="form-control">
             <label>Nombre o Apodo *</label>
             <input type="text" id="newPlayerName" placeholder="Ej: Manolo el Lento">
-        </div>
-        <div class="form-control">
-            <label>Nivel (1 a 10) *</label>
-            <input type="number" id="newPlayerLevel" min="1" max="10" value="7">
         </div>
         <div class="form-control">
             <label>Posición Principal</label>
@@ -633,6 +656,17 @@
                 <option value="POR">🧤 Portero (POR)</option>
             </select>
         </div>
+
+        <label style="font-size: 0.85rem; color: var(--primary); font-weight:700; margin-bottom:6px; display:block;">Atributos Estilo FIFA (1 - 99)</label>
+        <div class="fifa-inputs-grid">
+            <div class="form-control"><label>🏃 PAC (Ritmo)</label><input type="number" id="attrPac" min="1" max="99" value="60"></div>
+            <div class="form-control"><label>🎯 SHO (Tiro)</label><input type="number" id="attrSho" min="1" max="99" value="65"></div>
+            <div class="form-control"><label>🎯 PAS (Pases)</label><input type="number" id="attrPas" min="1" max="99" value="70"></div>
+            <div class="form-control"><label>🕺 DRI (Regate)</label><input type="number" id="attrDri" min="1" max="99" value="65"></div>
+            <div class="form-control"><label>🛡️ DEF (Defensa)</label><input type="number" id="attrDef" min="1" max="99" value="65"></div>
+            <div class="form-control"><label>🔋 PHY (Físico)</label><input type="number" id="attrPhy" min="1" max="99" value="70"></div>
+        </div>
+
         <div class="form-control">
             <label>Foto (Opcional)</label>
             <input type="file" id="newPlayerPhoto" accept="image/*" onchange="handlePhotoUpload(event)">
@@ -644,7 +678,7 @@
                 </div>
             </div>
         </div>
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
             <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
             <button class="btn" id="savePlayerBtn" onclick="savePlayerForm()">Guardar en la Nube</button>
         </div>
@@ -689,6 +723,35 @@
         return `https://ui-avatars.com/api/?name=${encodeURIComponent(player.nombre || 'J')}&background=166534&color=facc15&bold=true`;
     }
 
+    function calculateOverall(p) {
+        const pac = Number(p.pac || 60);
+        const sho = Number(p.sho || 60);
+        const pas = Number(p.pas || 60);
+        const dri = Number(p.dri || 60);
+        const def = Number(p.def || 60);
+        const phy = Number(p.phy || 60);
+        return Math.round((pac + sho + pas + dri + def + phy) / 6);
+    }
+
+    // Genera el objeto flexible adaptándose a cualquier orden de columnas que tengas en Google Sheets
+    function buildPlayerPayload(p) {
+        return {
+            id: String(p.id),
+            nombre: String(p.nombre),
+            posicion: String(p.posicion || 'MED'),
+            pac: Number(p.pac || 60),
+            sho: Number(p.sho || 65),
+            pas: Number(p.pas || 70),
+            dri: Number(p.dri || 65),
+            def: Number(p.def || 65),
+            phy: Number(p.phy || 70),
+            foto: p.foto || '',
+            goles: Number(p.goles || 0),
+            mvp: Number(p.mvp || 0),
+            partidos: Number(p.partidos || 0)
+        };
+    }
+
     async function fetchPlayers() {
         const loading = document.getElementById('loadingState');
         loading.style.display = 'block';
@@ -696,14 +759,18 @@
             const res = await fetch(API_URL);
             const data = await res.json();
 
-            // Filtramos estrictamente para que solo cargue filas que tengan un nombre válido
             players = (Array.isArray(data) ? data : [])
-                .filter(p => p.id && p.nombre && String(p.nombre).trim() !== '')
-                .map((p, idx) => ({
+                .filter(p => p.id && (p.nombre || p.name) && String(p.nombre || p.name).trim() !== '')
+                .map((p) => ({
                     id: String(p.id),
-                    nombre: String(p.nombre).trim(),
-                    nivel: Number(p.nivel || 5),
-                    posicion: String(p.posicion || 'MED').toUpperCase(),
+                    nombre: String(p.nombre || p.name).trim(),
+                    posicion: String(p.posicion || p.position || 'MED').toUpperCase(),
+                    pac: Number(p.pac || 60),
+                    sho: Number(p.sho || 65),
+                    pas: Number(p.pas || 70),
+                    dri: Number(p.dri || 65),
+                    def: Number(p.def || 65),
+                    phy: Number(p.phy || 70),
                     foto: p.foto || '',
                     goles: Number(p.goles || 0),
                     mvp: Number(p.mvp || 0),
@@ -730,6 +797,8 @@
 
         filtered.forEach(p => {
             const isSelected = selectedIds.has(p.id);
+            const ovr = calculateOverall(p);
+
             const card = document.createElement('div');
             card.className = `player-card ${isSelected ? 'selected' : ''}`;
             card.onclick = (e) => {
@@ -740,13 +809,23 @@
             card.innerHTML = `
                 <div class="check-indicator">✓</div>
                 <div class="card-top">
-                    <div class="rating-badge">${p.nivel}</div>
+                    <div class="rating-badge">${ovr}</div>
                     <span class="pos-badge pos-${p.posicion}">${p.posicion}</span>
                 </div>
                 <div class="avatar-wrapper">
                     <img src="${getAvatar(p)}" alt="${p.nombre}">
                 </div>
                 <div class="player-name" title="${p.nombre}">${p.nombre}</div>
+                
+                <div class="fifa-stats-grid">
+                    <div class="fifa-stat-item">PAC <span>${p.pac}</span></div>
+                    <div class="fifa-stat-item">SHO <span>${p.sho}</span></div>
+                    <div class="fifa-stat-item">PAS <span>${p.pas}</span></div>
+                    <div class="fifa-stat-item">DRI <span>${p.dri}</span></div>
+                    <div class="fifa-stat-item">DEF <span>${p.def}</span></div>
+                    <div class="fifa-stat-item">PHY <span>${p.phy}</span></div>
+                </div>
+
                 <div class="player-mini-stats">
                     <div><strong>${p.goles}</strong>Goles</div>
                     <div><strong>${p.mvp}</strong>MVPs</div>
@@ -803,10 +882,15 @@
 
     function openCreateModal() {
         editingPlayerId = null;
-        document.getElementById('modalTitle').innerText = '➕ Fichar Veterano';
+        document.getElementById('modalTitle').innerText = '➕ Fichar Veterano FUT';
         document.getElementById('newPlayerName').value = '';
-        document.getElementById('newPlayerLevel').value = '7';
         document.getElementById('newPlayerPos').value = 'MED';
+        document.getElementById('attrPac').value = '60';
+        document.getElementById('attrSho').value = '65';
+        document.getElementById('attrPas').value = '70';
+        document.getElementById('attrDri').value = '65';
+        document.getElementById('attrDef').value = '65';
+        document.getElementById('attrPhy').value = '70';
         document.getElementById('newPlayerPhoto').value = '';
         document.getElementById('photoPreviewBox').style.display = 'none';
         compressedPhotoBase64 = '';
@@ -819,8 +903,13 @@
         editingPlayerId = id;
         document.getElementById('modalTitle').innerText = `✏️ Editar a ${player.nombre}`;
         document.getElementById('newPlayerName').value = player.nombre;
-        document.getElementById('newPlayerLevel').value = player.nivel;
         document.getElementById('newPlayerPos').value = player.posicion || 'MED';
+        document.getElementById('attrPac').value = player.pac || 60;
+        document.getElementById('attrSho').value = player.sho || 65;
+        document.getElementById('attrPas').value = player.pas || 70;
+        document.getElementById('attrDri').value = player.dri || 65;
+        document.getElementById('attrDef').value = player.def || 65;
+        document.getElementById('attrPhy').value = player.phy || 70;
         document.getElementById('newPlayerPhoto').value = '';
         compressedPhotoBase64 = player.foto || '';
         if (compressedPhotoBase64) {
@@ -836,19 +925,22 @@
         document.getElementById('playerModal').classList.remove('open');
     }
 
-    // MÉTODO DE GUARDADO BLINDADO: Para asegurar que se registren todos los campos
     async function savePlayerForm() {
         const nameInput = document.getElementById('newPlayerName');
-        const levelInput = document.getElementById('newPlayerLevel');
         const posInput = document.getElementById('newPlayerPos');
         const btn = document.getElementById('savePlayerBtn');
 
         const nombre = nameInput.value.trim();
-        const nivel = Number(levelInput.value);
         const posicion = posInput.value;
+        const pac = Number(document.getElementById('attrPac').value) || 60;
+        const sho = Number(document.getElementById('attrSho').value) || 65;
+        const pas = Number(document.getElementById('attrPas').value) || 70;
+        const dri = Number(document.getElementById('attrDri').value) || 65;
+        const def = Number(document.getElementById('attrDef').value) || 65;
+        const phy = Number(document.getElementById('attrPhy').value) || 70;
 
-        if (!nombre || nivel < 1 || nivel > 10) {
-            alert('Introduce un nombre válido y nivel del 1 al 10.');
+        if (!nombre) {
+            alert('Introduce un nombre válido.');
             return;
         }
 
@@ -859,21 +951,23 @@
             if (editingPlayerId) {
                 const player = players.find(p => p.id === editingPlayerId);
                 player.nombre = nombre;
-                player.nivel = nivel;
                 player.posicion = posicion;
+                player.pac = pac; player.sho = sho; player.pas = pas;
+                player.dri = dri; player.def = def; player.phy = phy;
                 player.foto = compressedPhotoBase64 || '';
 
                 await fetch(`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: player })
+                    body: JSON.stringify({ data: buildPlayerPayload(player) })
                 });
             } else {
                 const newPlayer = {
                     id: String(Date.now()),
                     nombre: nombre,
-                    nivel: nivel,
                     posicion: posicion,
+                    pac: pac, sho: sho, pas: pas,
+                    dri: dri, def: def, phy: phy,
                     foto: compressedPhotoBase64 || '',
                     goles: 0,
                     mvp: 0,
@@ -882,7 +976,7 @@
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [newPlayer] })
+                    body: JSON.stringify({ data: [buildPlayerPayload(newPlayer)] })
                 });
             }
 
@@ -920,19 +1014,22 @@
         const posOrder = { 'POR': 1, 'DEF': 2, 'MED': 3, 'DEL': 4 };
         const sorted = [...convocated].sort((a, b) => {
             if (posOrder[a.posicion] !== posOrder[b.posicion]) return posOrder[a.posicion] - posOrder[b.posicion];
-            const noise = allowVariation ? (Math.random() - 0.5) * 1.5 : 0;
-            return (b.nivel + noise) - a.nivel;
+            const ovrA = calculateOverall(a);
+            const ovrB = calculateOverall(b);
+            const noise = allowVariation ? (Math.random() - 0.5) * 2 : 0;
+            return (ovrB + noise) - ovrA;
         });
 
         currentTeamA = []; currentTeamB = [];
         let sumA = 0, sumB = 0;
 
         sorted.forEach(player => {
-            if (currentTeamA.length < currentTeamB.length) { currentTeamA.push(player); sumA += player.nivel; }
-            else if (currentTeamB.length < currentTeamA.length) { currentTeamB.push(player); sumB += player.nivel; }
+            const ovr = calculateOverall(player);
+            if (currentTeamA.length < currentTeamB.length) { currentTeamA.push(player); sumA += ovr; }
+            else if (currentTeamB.length < currentTeamA.length) { currentTeamB.push(player); sumB += ovr; }
             else {
-                if (sumA <= sumB) { currentTeamA.push(player); sumA += player.nivel; }
-                else { currentTeamB.push(player); sumB += player.nivel; }
+                if (sumA <= sumB) { currentTeamA.push(player); sumA += ovr; }
+                else { currentTeamB.push(player); sumB += ovr; }
             }
         });
 
@@ -966,8 +1063,8 @@
         document.getElementById('emptyMatchMsg').style.display = 'none';
         document.getElementById('matchActiveContent').style.display = 'block';
 
-        const sumA = currentTeamA.reduce((acc, p) => acc + p.nivel, 0);
-        const sumB = currentTeamB.reduce((acc, p) => acc + p.nivel, 0);
+        const sumA = currentTeamA.reduce((acc, p) => acc + calculateOverall(p), 0);
+        const sumB = currentTeamB.reduce((acc, p) => acc + calculateOverall(p), 0);
 
         document.getElementById('sumTeamA').innerText = sumA;
         document.getElementById('sumTeamB').innerText = sumB;
@@ -981,6 +1078,7 @@
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             team.forEach(p => {
+                const ovr = calculateOverall(p);
                 const row = document.createElement('div');
                 row.className = 'team-player-row';
                 row.innerHTML = `
@@ -989,7 +1087,7 @@
                         <div style="min-width:0;">
                             <strong style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.nombre}</strong>
                             <div style="font-size: 0.75rem; color: var(--muted);">
-                                <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span> Niv ${p.nivel}
+                                <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span> OVR ${ovr}
                             </div>
                         </div>
                     </div>
@@ -1028,7 +1126,7 @@
                 await fetch(`${API_URL}/id/${encodeURIComponent(p.id)}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: p })
+                    body: JSON.stringify({ data: buildPlayerPayload(p) })
                 });
             }
 
@@ -1046,11 +1144,11 @@
 
     function copyToWhatsApp() {
         if (currentTeamA.length === 0) return;
-        let text = `⚽ *JOGO BONITO WALKING F.C.* ⚽\n*Convocatoria Veteranos*\n\n`;
+        let text = `⚽ *JOGO BONITO WALKING F.C.* ⚽\n*Convocatoria Ultimate Team*\n\n`;
         text += `🔴 *Equipo A (Media: ${document.getElementById('avgTeamA').innerText})*\n`;
-        currentTeamA.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
+        currentTeamA.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (OVR ${calculateOverall(p)})\n`; });
         text += `\n🔵 *Equipo B (Media: ${document.getElementById('avgTeamB').innerText})*\n`;
-        currentTeamB.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (${p.nivel})\n`; });
+        currentTeamB.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (OVR ${calculateOverall(p)})\n`; });
 
         navigator.clipboard.writeText(text).then(() => alert('📲 ¡Copiado para WhatsApp!'));
     }
@@ -1061,12 +1159,13 @@
         const sorted = [...players].sort((a, b) => b.goles - a.goles || b.mvp - a.mvp);
 
         sorted.forEach((p, index) => {
+            const ovr = calculateOverall(p);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>#${index + 1}</strong></td>
                 <td><div class="stats-player-cell"><img src="${getAvatar(p)}" alt="${p.nombre}"><span>${p.nombre}</span></div></td>
                 <td><span class="pos-badge pos-${p.posicion}">${p.posicion}</span></td>
-                <td><strong>${p.nivel}</strong></td>
+                <td><strong>${ovr}</strong></td>
                 <td>⚽ ${p.goles}</td>
                 <td>⭐ ${p.mvp}</td>
                 <td>👟 ${p.partidos}</td>
