@@ -194,7 +194,7 @@
         .player-card:hover { border-color: #64748b; transform: translateY(-2px); }
         .player-card.selected {
             border-color: var(--primary);
-            background: linear-gradient(135deg, #14532d 0%, #0f172a 100%);
+            background: linear-gradient(160deg, #14532d 0%, #0f172a 100%);
             box-shadow: 0 0 18px rgba(250, 204, 21, 0.25);
         }
         .card-top {
@@ -733,7 +733,6 @@
         return Math.round((pac + sho + pas + dri + def + phy) / 6);
     }
 
-    // Genera el objeto flexible adaptándose a cualquier orden de columnas que tengas en Google Sheets
     function buildPlayerPayload(p) {
         return {
             id: String(p.id),
@@ -752,8 +751,27 @@
         };
     }
 
-    async function fetchPlayers() {
+    // CARGAR JUGADORES CON CACHÉ LOCAL (Ahorro del 90% de peticiones a SheetDB)
+    async function fetchPlayers(forceRefresh = false) {
         const loading = document.getElementById('loadingState');
+        
+        // Comprobar si tenemos caché local guardada
+        if (!forceRefresh) {
+            const cachedData = localStorage.getItem('jb_players_cache');
+            if (cachedData) {
+                try {
+                    players = JSON.parse(cachedData);
+                    loading.style.display = 'none';
+                    renderPlayers();
+                    // Sincronizar en segundo plano sin bloquear la pantalla
+                    backgroundSync();
+                    return;
+                } catch (e) {
+                    console.error("Error leyendo caché", e);
+                }
+            }
+        }
+
         loading.style.display = 'block';
         try {
             const res = await fetch(API_URL);
@@ -777,12 +795,51 @@
                     partidos: Number(p.partidos || 0)
                 }));
 
+            // Guardar en caché local
+            localStorage.setItem('jb_players_cache', JSON.stringify(players));
             loading.style.display = 'none';
             renderPlayers();
         } catch (err) {
             loading.innerHTML = '❌ Error al conectar con Google Sheets.';
             console.error(err);
         }
+    }
+
+    async function backgroundSync() {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                players = data
+                    .filter(p => p.id && (p.nombre || p.name) && String(p.nombre || p.name).trim() !== '')
+                    .map((p) => ({
+                        id: String(p.id),
+                        nombre: String(p.nombre || p.name).trim(),
+                        posicion: String(p.posicion || p.position || 'MED').toUpperCase(),
+                        pac: Number(p.pac || 60),
+                        sho: Number(p.sho || 65),
+                        pas: Number(p.pas || 70),
+                        dri: Number(p.dri || 65),
+                        def: Number(p.def || 65),
+                        phy: Number(p.phy || 70),
+                        foto: p.foto || '',
+                        goles: Number(p.goles || 0),
+                        mvp: Number(p.mvp || 0),
+                        partidos: Number(p.partidos || 0)
+                    }));
+                localStorage.setItem('jb_players_cache', JSON.stringify(players));
+                renderPlayers();
+            }
+        } catch(e) {
+            // Silencioso si falla la red en segundo plano
+        }
+    }
+
+    function updateCacheAndUI() {
+        localStorage.setItem('jb_players_cache', JSON.stringify(players));
+        renderPlayers();
+        if (currentTeamA.length > 0 || currentTeamB.length > 0) renderMatchTeams();
+        renderRanking();
     }
 
     function renderPlayers() {
@@ -954,7 +1011,7 @@
                 player.posicion = posicion;
                 player.pac = pac; player.sho = sho; player.pas = pas;
                 player.dri = dri; player.def = def; player.phy = phy;
-                player.foto = compressedPhotoBase64 || '';
+                player.foto = compressedPhotoBase64 || player.foto;
 
                 await fetch(`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`, {
                     method: 'PATCH',
@@ -978,9 +1035,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ data: [buildPlayerPayload(newPlayer)] })
                 });
+                players.push(newPlayer);
+                selectedIds.add(newPlayer.id);
             }
 
-            await fetchPlayers();
+            updateCacheAndUI();
             closeModal();
         } catch (err) {
             alert('Error al guardar en Google Sheets.');
@@ -998,7 +1057,7 @@
             await fetch(`${API_URL}/id/${encodeURIComponent(id)}`, { method: 'DELETE' });
             players = players.filter(p => p.id !== id);
             selectedIds.delete(id);
-            renderPlayers();
+            updateCacheAndUI();
         } catch (err) {
             alert('No se pudo eliminar.');
         }
@@ -1132,8 +1191,7 @@
 
             matchSaved = true;
             btn.innerText = '✅ Acta Guardada';
-            await fetchPlayers();
-            renderRanking();
+            updateCacheAndUI();
             alert('🏆 ¡Acta guardada correctamente!');
         } catch (err) {
             alert('Error guardando el acta.');
