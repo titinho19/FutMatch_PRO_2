@@ -1,1238 +1,430 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo Bonito Walking F.C.</title>
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --card-hover: #334155;
-            --primary: #facc15;
-            --primary-dark: #ca8a04;
-            --accent: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --border: #334155;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            padding-bottom: 60px;
-        }
-
-        header {
-            background: linear-gradient(135deg, #166534 0%, #0f172a 100%);
-            padding: 24px 20px;
-            text-align: center;
-            border-bottom: 4px solid var(--primary);
-        }
-        .club-badge-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        .club-shield {
-            width: 65px;
-            height: 75px;
-            background: #22c55e;
-            border: 3px solid #facc15;
-            border-radius: 12px 12px 35px 35px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .club-shield::before, .club-shield::after {
-            content: '';
-            position: absolute;
-            width: 45px;
-            height: 4px;
-            background: #94a3b8;
-            top: 36px;
-        }
-        .club-shield::before { transform: rotate(35deg); }
-        .club-shield::after { transform: rotate(-35deg); }
-        .shield-text {
-            font-size: 1.3rem;
-            font-weight: 900;
-            color: #0f172a;
-            background: #facc15;
-            padding: 2px 8px;
-            border-radius: 6px;
-            z-index: 2;
-            letter-spacing: 1px;
-            border: 1px solid #166534;
-        }
-
-        header h1 { font-size: 1.7rem; color: var(--primary); letter-spacing: 0.5px; }
-        header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; font-style: italic; }
-
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px 20px;
-            background: #162032;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            border-bottom: 1px solid var(--border);
-        }
-        .tab-btn {
-            background: transparent;
-            color: var(--muted);
-            border: 1px solid transparent;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab-btn.active {
-            background: var(--primary);
-            color: #0f172a;
-            font-weight: 700;
-        }
-
-        .container { max-width: 960px; margin: 20px auto; padding: 0 16px; }
-        .section { display: none; }
-        .section.active { display: block; }
-
-        .convocatoria-bar {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 15px 20px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4);
-        }
-        .counter-badge {
-            font-size: 1.05rem;
-            font-weight: 700;
-        }
-        .counter-badge span {
-            background: var(--primary);
-            color: #0f172a;
-            padding: 3px 10px;
-            border-radius: 999px;
-            margin-left: 6px;
-        }
-        .bar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-        .btn {
-            background: var(--primary);
-            color: #0f172a;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn:hover { opacity: 0.92; }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { background: #475569 !important; color: #cbd5e1 !important; cursor: not-allowed; }
-        .btn-secondary { background: var(--accent); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .btn-warning { background: var(--warning); color: #451a03; }
-        .btn-danger { background: var(--danger); color: white; }
-
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-        .toolbar input, .toolbar select {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 10px 14px;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .players-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 16px;
-        }
-        .player-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            padding: 14px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        .player-card:hover { border-color: #64748b; transform: translateY(-2px); }
-        .player-card.selected {
-            border-color: var(--primary);
-            background: linear-gradient(160deg, #14532d 0%, #0f172a 100%);
-            box-shadow: 0 0 18px rgba(250, 204, 21, 0.25);
-        }
-        .card-top {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 4px;
-        }
-        .rating-badge {
-            background: #d4af37;
-            color: #0f172a;
-            font-weight: 900;
-            font-size: 1.25rem;
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-        .pos-badge {
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 6px;
-            background: #334155;
-            color: var(--text);
-        }
-        .pos-POR { background: #eab308; color: #422006; }
-        .pos-DEF { background: #3b82f6; color: white; }
-        .pos-MED { background: #22c55e; color: #052e16; }
-        .pos-DEL { background: #ef4444; color: white; }
-
-        .avatar-wrapper {
-            width: 74px;
-            height: 74px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid var(--primary);
-            margin-bottom: 6px;
-            background: #0f172a;
-        }
-        .avatar-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .player-name {
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-        }
-
-        .fifa-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            padding: 6px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-bottom: 8px;
-        }
-        .fifa-stat-item span {
-            font-weight: 800;
-            color: var(--text);
-        }
-
-        .player-mini-stats {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 6px;
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-        .player-mini-stats div strong {
-            display: block;
-            color: var(--text);
-            font-size: 0.85rem;
-        }
-        .check-indicator {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--primary);
-            color: #0f172a;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            font-weight: 900;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-        }
-        .player-card.selected .check-indicator { display: flex; }
-
-        .card-footer-actions {
-            display: flex;
-            gap: 6px;
-            width: 100%;
-            margin-top: 8px;
-            padding-top: 6px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-        }
-        .card-action-btn {
-            flex: 1;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid transparent;
-            color: var(--muted);
-            font-size: 0.75rem;
-            padding: 5px 4px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.15s;
-        }
-        .card-action-btn.edit:hover { background: var(--accent); color: white; }
-        .card-action-btn.delete:hover { background: var(--danger); color: white; }
-
-        .scoreboard {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 18px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 28px;
-            text-align: center;
-        }
-        .score-team { font-weight: 800; font-size: 1.1rem; }
-        .score-numbers {
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: #090e1a;
-            padding: 6px 22px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            letter-spacing: 4px;
-            color: var(--primary);
-        }
-
-        .teams-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .team-box {
-            background: var(--card);
-            border-radius: 14px;
-            padding: 20px;
-            border-top: 5px solid var(--danger);
-        }
-        .team-box.team-b { border-top-color: var(--accent); }
-        .team-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-        .team-player-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 10px;
-            margin-bottom: 8px;
-            gap: 8px;
-        }
-        .team-player-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-        }
-        .team-player-info img {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-        .post-match-actions {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-shrink: 0;
-        }
-        .goal-control {
-            display: inline-flex;
-            align-items: center;
-            background: #0f172a;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .goal-control button {
-            background: transparent;
-            color: var(--text);
-            border: none;
-            padding: 5px 9px;
-            cursor: pointer;
-            font-weight: 900;
-            font-size: 0.9rem;
-        }
-        .goal-control button:hover { background: var(--card-hover); }
-        .goal-control span {
-            padding: 0 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-        .mvp-btn {
-            padding: 6px 10px;
-            font-size: 0.75rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #0f172a;
-            color: var(--muted);
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.15s;
-        }
-        .mvp-btn.active {
-            background: var(--warning);
-            color: #451a03;
-            border-color: var(--warning);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
-        }
-
-        .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .stats-table th, .stats-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        .stats-table th { background: #0f172a; color: var(--muted); font-size: 0.85rem; }
-        .stats-player-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; }
-        .stats-player-cell img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.75);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 16px;
-            overflow-y: auto;
-        }
-        .modal-overlay.open { display: flex; }
-        .modal {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            max-width: 440px;
-            width: 100%;
-            padding: 24px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal h3 { margin-bottom: 16px; color: var(--primary); }
-        .form-control { margin-bottom: 12px; }
-        .form-control label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
-        .form-control input, .form-control select {
-            width: 100%;
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #0f172a;
-            color: var(--text);
-        }
-        .fifa-inputs-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-        .preview-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        .preview-box img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-        }
-
-        .status-msg {
-            text-align: center;
-            padding: 30px;
-            color: var(--muted);
-        }
-
-        @media (max-width: 700px) {
-            .teams-grid { grid-template-columns: 1fr; }
-            .convocatoria-bar { flex-direction: column; align-items: stretch; text-align: center; }
-            .bar-actions { justify-content: center; }
-            .scoreboard { gap: 12px; }
-            .score-numbers { font-size: 1.6rem; padding: 6px 14px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070b12">
+<meta name="description" content="Vestuario digital del Jogo Bonito Walking F.C.: plantilla FUT, convocatorias, actas editables, historial y ranking de leyendas.">
+<title>Jogo Bonito Walking F.C. · Vestuario</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2316a34a'/%3E%3Ctext x='50' y='50' font-size='46' font-family='Arial' font-weight='bold' fill='%23facc15' text-anchor='middle' dominant-baseline='central'%3EJB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header>
-    <div class="club-badge-container">
-        <div class="club-shield">
-            <div class="shield-text">JB</div>
-        </div>
-        <div style="text-align: left;">
-            <h1>Jogo Bonito Walking F.C.</h1>
-            <p>"Aquí se corre poco, pero el balón va limpio (y los meniscos sufren lo justo)"</p>
-        </div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="shield" aria-hidden="true">
+        <span>JB</span>
+        <i class="shield-band"></i>
+      </div>
+      <div class="brand-text">
+        <h1>Jogo Bonito <span>Walking F.C.</span></h1>
+        <p>“Aquí se corre poco, pero el balón va limpio (y los meniscos sufren lo justo)”</p>
+      </div>
     </div>
+    <div class="topbar-actions">
+      <button class="sync-pill" id="syncPill" data-state="local" type="button" title="Sincronizar con la nube">
+        <span class="sync-dot"></span><span id="syncText">Conectando…</span>
+      </button>
+      <button class="icon-btn" id="btnRefresh" type="button" title="Recargar datos de la nube" aria-label="Recargar datos">⟳</button>
+      <button class="icon-btn" id="btnSettings" type="button" title="Conexión y copia de seguridad" aria-label="Ajustes">⚙</button>
+    </div>
+  </div>
 </header>
 
-<div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('bolsa')">📋 Bolsa y Convocatoria</button>
-    <button class="tab-btn" onclick="switchTab('partido')">⚖️ Partido del Finde</button>
-    <button class="tab-btn" onclick="switchTab('ranking')">🏆 Ranking Leyendas</button>
-</div>
+<nav class="tabs-wrap" aria-label="Secciones">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="plantilla" type="button">👥 <span>Plantilla</span></button>
+    <button class="tab-btn" data-tab="partido" type="button">⚖️ <span>Partido</span></button>
+    <button class="tab-btn" data-tab="historial" type="button">📅 <span>Historial</span></button>
+    <button class="tab-btn" data-tab="ranking" type="button">🏆 <span>Ranking</span></button>
+  </div>
+</nav>
 
-<div class="container">
+<main class="container">
 
-    <div id="sec-bolsa" class="section active">
-        <div class="convocatoria-bar">
-            <div class="counter-badge">
-                Convocados para hoy: <span id="selectedCount">0</span>
-            </div>
-            <div class="bar-actions">
-                <button class="btn btn-outline" onclick="toggleSelectAll()">Seleccionar Todos / Ninguno</button>
-                <button class="btn btn-secondary" onclick="openCreateModal()">+ Nuevo Fichaje</button>
-                <button class="btn" id="btnGenerar" onclick="generateBalancedTeams()">⚖️ Generar Equipos FUT</button>
-            </div>
-        </div>
-
-        <div class="toolbar">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar veterano..." oninput="renderPlayers()">
-            <select id="filterPos" onchange="renderPlayers()">
-                <option value="ALL">Todas las posiciones</option>
-                <option value="POR">🧤 Porteros (POR)</option>
-                <option value="DEF">🛡️ Defensas (DEF)</option>
-                <option value="MED">🎯 Medios (MED)</option>
-                <option value="DEL">⚡ Delanteros (DEL)</option>
-            </select>
-        </div>
-
-        <div id="loadingState" class="status-msg">🔄 Cargando plantilla Ultimate Team...</div>
-        <div id="playersGrid" class="players-grid"></div>
+  <!-- ===================== PLANTILLA ===================== -->
+  <section id="sec-plantilla" class="section active">
+    <div class="hero-card">
+      <div class="hero-info">
+        <h2>Bolsa de veteranos</h2>
+        <p>Marca quién se apunta, genera dos equipos equilibrados y a jugar. Los números se actualizan solos al guardar el acta.</p>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-item"><b id="dashPlayers">0</b><small>Veteranos</small></div>
+        <div class="dash-item"><b id="dashSelected">0</b><small>Convocados</small></div>
+        <div class="dash-item"><b id="dashAvg">–</b><small>Media</small></div>
+        <div class="dash-item"><b id="dashMatches">0</b><small>Actas</small></div>
+      </div>
     </div>
 
-    <div id="sec-partido" class="section">
-        <div class="convocatoria-bar">
+    <div class="action-bar">
+      <div class="selected-pill">Convocados <b id="selectedCount">0</b></div>
+      <div class="action-btns">
+        <button class="btn btn-outline" id="btnSelectAll" type="button">Seleccionar todos</button>
+        <button class="btn btn-ghost" id="btnNewPlayer" type="button">+ Nuevo fichaje</button>
+        <button class="btn btn-primary" id="btnGenerate" type="button">⚖️ Generar equipos</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span aria-hidden="true">🔎</span>
+        <input id="searchInput" type="search" placeholder="Buscar veterano…" autocomplete="off">
+      </div>
+      <div class="chips" id="posChips">
+        <button class="chip active" data-pos="ALL" type="button">Todos</button>
+        <button class="chip" data-pos="POR" type="button">🧤 POR</button>
+        <button class="chip" data-pos="DEF" type="button">🛡️ DEF</button>
+        <button class="chip" data-pos="MED" type="button">🎯 MED</button>
+        <button class="chip" data-pos="DEL" type="button">⚡ DEL</button>
+      </div>
+    </div>
+
+    <div id="loadingState" class="skeleton-grid" aria-hidden="true"></div>
+    <div id="playersGrid" class="players-grid"></div>
+    <div id="playersEmpty" class="empty-state" hidden>
+      <div class="empty-icon">🧢</div>
+      <h3>No hay nadie que coincida</h3>
+      <p>Prueba con otro nombre, cambia el filtro o ficha a un nuevo veterano.</p>
+      <button class="btn btn-primary" type="button" onclick="openPlayerModal(null)">+ Nuevo fichaje</button>
+    </div>
+    <div id="loadError" class="empty-state" hidden>
+      <div class="empty-icon">📡</div>
+      <h3>No se pudo conectar con Google Sheets</h3>
+      <p>Revisa la URL de tu API en ⚙ Ajustes o inténtalo de nuevo.</p>
+      <button class="btn btn-primary" id="btnRetryLoad" type="button">Reintentar</button>
+    </div>
+  </section>
+
+  <!-- ===================== PARTIDO ===================== -->
+  <section id="sec-partido" class="section">
+    <div class="section-head">
+      <div>
+        <h2>Acta del partido</h2>
+        <p>Anota goles y MVP. Si se te olvida algo, podrás corregirlo desde el historial sin descuadrar las estadísticas.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-outline" id="btnShuffle" type="button">🎲 Re-sortear</button>
+        <button class="btn btn-outline" id="btnWhatsapp" type="button">📲 Compartir</button>
+        <button class="btn btn-primary" id="btnSaveMatch" type="button">🏁 Guardar acta</button>
+      </div>
+    </div>
+
+    <div id="emptyMatch" class="empty-state">
+      <div class="empty-icon">⚽</div>
+      <h3>Todavía no hay equipos</h3>
+      <p>Ve a <strong>Plantilla</strong>, selecciona a los convocados y pulsa “Generar equipos”.</p>
+      <button class="btn btn-primary" type="button" onclick="switchTab('plantilla')">Ir a la plantilla</button>
+    </div>
+
+    <div id="matchContent" hidden>
+      <div class="scoreboard">
+        <div class="score-team team-a">
+          <span class="team-dot"></span>
+          <div><b>Equipo A</b><small id="avgA">Media –</small></div>
+        </div>
+        <div class="score-display">
+          <span id="scoreA">0</span><i>:</i><span id="scoreB">0</span>
+        </div>
+        <div class="score-team team-b">
+          <div><b>Equipo B</b><small id="avgB">Media –</small></div>
+          <span class="team-dot"></span>
+        </div>
+        <div class="balance">
+          <div class="balance-bar"><span id="balanceFill"></span></div>
+          <small id="balanceText">Equilibrio perfecto</small>
+        </div>
+      </div>
+
+      <div class="match-meta">
+        <label class="meta-field"><span>Jornada</span><input type="number" id="matchJornada" min="1" step="1"></label>
+        <label class="meta-field"><span>Fecha</span><input type="date" id="matchFecha"></label>
+        <label class="meta-field grow"><span>Notas del partido</span><input type="text" id="matchNotas" maxlength="140" placeholder="Ej: frío, campo pesado, arbitraje casero…"></label>
+      </div>
+
+      <div class="teams-grid">
+        <div class="team-box team-box-a">
+          <div class="team-header">
+            <h3><span class="team-dot"></span> Equipo A</h3>
+            <div class="team-summary"><span id="sumA">0</span> OVR · <b id="goalsA">0</b> goles</div>
+          </div>
+          <div id="listTeamA"></div>
+        </div>
+        <div class="team-box team-box-b">
+          <div class="team-header">
+            <h3><span class="team-dot"></span> Equipo B</h3>
+            <div class="team-summary"><span id="sumB">0</span> OVR · <b id="goalsB">0</b> goles</div>
+          </div>
+          <div id="listTeamB"></div>
+        </div>
+      </div>
+
+      <p class="hint center">Truco: usa los botones ⭐ para elegir al MVP. Después podrás editar el acta desde <strong>Historial</strong>.</p>
+    </div>
+  </section>
+
+  <!-- ===================== HISTORIAL ===================== -->
+  <section id="sec-historial" class="section">
+    <div class="section-head">
+      <div>
+        <h2>Historial de actas</h2>
+        <p>Corrige cualquier jornada pasada: los goles, MVPs y partidos jugados se ajustan automáticamente.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-outline" id="btnSyncMatches" type="button">🔄 Sincronizar</button>
+        <button class="btn btn-primary" type="button" onclick="switchTab('partido')">+ Nueva acta</button>
+      </div>
+    </div>
+    <div class="history-stats" id="historyStats"></div>
+    <div id="historyList" class="history-list"></div>
+    <div id="historyEmpty" class="empty-state" hidden>
+      <div class="empty-icon">🗓️</div>
+      <h3>Aún no hay actas guardadas</h3>
+      <p>Cuando termines el próximo partido pulsa “Guardar acta”. Aquí podrás consultarlo y editarlo todo.</p>
+      <button class="btn btn-primary" type="button" onclick="switchTab('plantilla')">Generar equipos</button>
+    </div>
+    <p class="hint center" id="historyStorageHint"></p>
+  </section>
+
+  <!-- ===================== RANKING ===================== -->
+  <section id="sec-ranking" class="section">
+    <div class="section-head">
+      <div>
+        <h2>Ranking de leyendas</h2>
+        <p>Goles, MVPs y forma reciente. El vestuario no miente… aunque el cronómetro sí.</p>
+      </div>
+      <div class="head-actions">
+        <div class="search-wrap compact">
+          <span aria-hidden="true">🔎</span>
+          <input id="rankSearch" type="search" placeholder="Buscar leyenda…" autocomplete="off">
+        </div>
+      </div>
+    </div>
+    <div id="podium" class="podium"></div>
+    <div class="history-stats" id="rankStats"></div>
+    <div class="table-wrap">
+      <table class="stats-table" id="rankTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th data-sort="nombre" class="sortable">Veterano</th>
+            <th data-sort="posicion" class="sortable hide-sm">Pos</th>
+            <th data-sort="ovr" class="sortable">OVR</th>
+            <th data-sort="goles" class="sortable active">⚽ Goles</th>
+            <th data-sort="mvp" class="sortable">⭐ MVP</th>
+            <th data-sort="partidos" class="sortable hide-sm">👟 PJ</th>
+            <th data-sort="ratio" class="sortable hide-sm">G/P</th>
+            <th class="hide-sm">Forma</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+    </div>
+    <div id="rankEmpty" class="empty-state" hidden>
+      <div class="empty-icon">🏆</div>
+      <h3>Sin leyendas todavía</h3>
+      <p>Ficha a tu primer veterano para empezar a repartir gloria.</p>
+      <button class="btn btn-primary" type="button" onclick="openPlayerModal(null)">+ Nuevo fichaje</button>
+    </div>
+  </section>
+
+</main>
+<!-- ===================== MODAL JUGADOR ===================== -->
+<div class="modal-overlay" id="playerModal" role="dialog" aria-modal="true" aria-labelledby="playerModalTitle">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div>
+        <h3 id="playerModalTitle">➕ Nuevo fichaje</h3>
+        <p class="hint" id="playerModalSubtitle">Añade a un veterano a la plantilla.</p>
+      </div>
+      <button class="icon-btn" type="button" data-close="playerModal" aria-label="Cerrar">✕</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-col">
+        <div class="form-control">
+          <label for="playerName">Nombre o apodo *</label>
+          <input type="text" id="playerName" maxlength="40" placeholder="Ej: Manolo el Lento" autocomplete="off">
+        </div>
+        <div class="form-control">
+          <label for="playerPos">Posición principal</label>
+          <select id="playerPos">
+            <option value="MED">🎯 Centrocampista (MED)</option>
+            <option value="DEF">🛡️ Defensa (DEF)</option>
+            <option value="DEL">⚡ Delantero (DEL)</option>
+            <option value="POR">🧤 Portero (POR)</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label>Foto (opcional)</label>
+          <input type="file" id="playerPhoto" accept="image/*">
+          <div class="preview-box" id="photoPreviewBox" hidden>
+            <img id="photoPreviewImg" src="" alt="Vista previa">
             <div>
-                <strong>Acta del Partido de Veteranos</strong>
-                <p style="font-size: 0.85rem; color: var(--muted);">Apunta los goles y el MVP de hoy. Al terminar, guarda el acta.</p>
+              <small>✓ Foto lista</small>
+              <button class="btn btn-outline btn-xs" type="button" id="btnClearPhoto">Quitar</button>
             </div>
-            <div class="bar-actions">
-                <button class="btn btn-outline" onclick="shuffleAgain()">🎲 Re-sortear</button>
-                <button class="btn btn-secondary" onclick="copyToWhatsApp()">📲 WhatsApp</button>
-                <button class="btn btn-warning" id="btnRecordMatch" onclick="finishAndSaveMatch()">🏁 Finalizar y Guardar Acta</button>
-            </div>
+          </div>
         </div>
+        <details class="details-box" id="statsEditor" hidden>
+          <summary>✏️ Ajuste manual de totales</summary>
+          <div class="stat-inputs">
+            <label>⚽ Goles<input type="number" id="statGoles" min="0" step="1"></label>
+            <label>⭐ MVPs<input type="number" id="statMvp" min="0" step="1"></label>
+            <label>👟 Partidos<input type="number" id="statPartidos" min="0" step="1"></label>
+          </div>
+          <p class="hint small" style="margin-top:8px">Úsalo para corregir totales antiguos. Para un partido concreto, edita el acta desde <b>Historial</b>.</p>
+        </details>
+        <div class="profile-block" id="playerProfile" hidden></div>
+      </div>
 
-        <div id="emptyMatchMsg" class="status-msg">
-            Todavía no hay equipos generados. Ve a <strong>Bolsa y Convocatoria</strong> y pulsa "Generar Equipos FUT".
+      <div class="form-col">
+        <div class="ovr-live">
+          <span id="ovrLive">72</span>
+          <small>OVR</small>
+          <button class="btn btn-outline btn-xs" type="button" id="btnPosPreset">✨ Ajustar a posición</button>
         </div>
-
-        <div id="matchActiveContent" style="display: none;">
-            <div class="scoreboard">
-                <div class="score-team" style="color: var(--danger);">🔴 EQUIPO A</div>
-                <div class="score-numbers">
-                    <span id="scoreGoalsA">0</span> - <span id="scoreGoalsB">0</span>
-                </div>
-                <div class="score-team" style="color: var(--accent);">EQUIPO B 🔵</div>
-            </div>
-
-            <div id="teamsContainer" class="teams-grid">
-                <div class="team-box">
-                    <div class="team-header">
-                        <h3 style="color: var(--danger);">🔴 Equipo A</h3>
-                        <span>Media FUT: <strong id="avgTeamA">0.0</strong> | Pts: <span id="sumTeamA">0</span></span>
-                    </div>
-                    <div id="listTeamA"></div>
-                </div>
-
-                <div class="team-box team-b">
-                    <div class="team-header">
-                        <h3 style="color: var(--accent);">🔵 Equipo B</h3>
-                        <span>Media FUT: <strong id="avgTeamB">0.0</strong> | Pts: <span id="sumTeamB">0</span></span>
-                    </div>
-                    <div id="listTeamB"></div>
-                </div>
-            </div>
+        <div class="attr-list">
+          <div class="attr-row"><span class="attr-label"><em>PAC</em> Ritmo</span><input type="number" id="attrPac" min="1" max="99" value="60"></div>
+          <div class="attr-row"><span class="attr-label"><em>SHO</em> Tiro</span><input type="number" id="attrSho" min="1" max="99" value="65"></div>
+          <div class="attr-row"><span class="attr-label"><em>PAS</em> Pases</span><input type="number" id="attrPas" min="1" max="99" value="70"></div>
+          <div class="attr-row"><span class="attr-label"><em>DRI</em> Regate</span><input type="number" id="attrDri" min="1" max="99" value="65"></div>
+          <div class="attr-row"><span class="attr-label"><em>DEF</em> Defensa</span><input type="number" id="attrDef" min="1" max="99" value="65"></div>
+          <div class="attr-row"><span class="attr-label"><em>PHY</em> Físico</span><input type="number" id="attrPhy" min="1" max="99" value="70"></div>
         </div>
+      </div>
     </div>
 
-    <div id="sec-ranking" class="section">
-        <div style="overflow-x: auto;">
-            <table class="stats-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Veterano</th>
-                        <th>Pos</th>
-                        <th>OVR</th>
-                        <th>⚽ Goles</th>
-                        <th>⭐ MVPs</th>
-                        <th>👟 Partidos</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="rankingBody"></tbody>
-            </table>
-        </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" type="button" data-close="playerModal">Cancelar</button>
+      <button class="btn btn-primary" id="btnSavePlayer" type="button">Guardar en la nube</button>
     </div>
-
+  </div>
 </div>
 
-<!-- MODAL CREAR / EDITAR CON ATRIBUTOS FIFA -->
-<div class="modal-overlay" id="playerModal">
-    <div class="modal">
-        <h3 id="modalTitle">➕ Fichar Veterano FUT</h3>
-        <div class="form-control">
-            <label>Nombre o Apodo *</label>
-            <input type="text" id="newPlayerName" placeholder="Ej: Manolo el Lento">
-        </div>
-        <div class="form-control">
-            <label>Posición Principal</label>
-            <select id="newPlayerPos">
-                <option value="MED">🎯 Centrocampista (MED)</option>
-                <option value="DEF">🛡️ Defensa (DEF)</option>
-                <option value="DEL">⚡ Delantero (DEL)</option>
-                <option value="POR">🧤 Portero (POR)</option>
-            </select>
-        </div>
-
-        <label style="font-size: 0.85rem; color: var(--primary); font-weight:700; margin-bottom:6px; display:block;">Atributos Estilo FIFA (1 - 99)</label>
-        <div class="fifa-inputs-grid">
-            <div class="form-control"><label>🏃 PAC (Ritmo)</label><input type="number" id="attrPac" min="1" max="99" value="60"></div>
-            <div class="form-control"><label>🎯 SHO (Tiro)</label><input type="number" id="attrSho" min="1" max="99" value="65"></div>
-            <div class="form-control"><label>🎯 PAS (Pases)</label><input type="number" id="attrPas" min="1" max="99" value="70"></div>
-            <div class="form-control"><label>🕺 DRI (Regate)</label><input type="number" id="attrDri" min="1" max="99" value="65"></div>
-            <div class="form-control"><label>🛡️ DEF (Defensa)</label><input type="number" id="attrDef" min="1" max="99" value="65"></div>
-            <div class="form-control"><label>🔋 PHY (Físico)</label><input type="number" id="attrPhy" min="1" max="99" value="70"></div>
-        </div>
-
-        <div class="form-control">
-            <label>Foto (Opcional)</label>
-            <input type="file" id="newPlayerPhoto" accept="image/*" onchange="handlePhotoUpload(event)">
-            <div class="preview-box" id="photoPreviewBox" style="display: none;">
-                <img id="photoPreviewImg" src="" alt="Vista previa">
-                <div style="display:flex; flex-direction:column; gap:4px;">
-                    <span style="font-size: 0.8rem; color: var(--primary);">✓ Foto lista</span>
-                    <button type="button" class="btn btn-outline" style="padding:3px 8px; font-size:0.7rem;" onclick="clearPhoto()">Quitar</button>
-                </div>
-            </div>
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-            <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
-            <button class="btn" id="savePlayerBtn" onclick="savePlayerForm()">Guardar en la Nube</button>
-        </div>
+<!-- ===================== MODAL EDITAR ACTA ===================== -->
+<div class="modal-overlay" id="matchModal" role="dialog" aria-modal="true" aria-labelledby="editMatchTitle">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <div>
+        <h3 id="editMatchTitle">✏️ Editar acta</h3>
+        <p class="hint">Cambia lo que haga falta: los totales se recalculan con la diferencia.</p>
+      </div>
+      <button class="icon-btn" type="button" data-close="matchModal" aria-label="Cerrar">✕</button>
     </div>
+
+    <div class="editor-meta">
+      <label class="meta-field"><span>Jornada</span><input type="number" id="editJornada" min="1" step="1"></label>
+      <label class="meta-field"><span>Fecha</span><input type="date" id="editFecha"></label>
+      <label class="meta-field grow"><span>Notas</span><input type="text" id="editNotas" maxlength="140"></label>
+    </div>
+
+    <div class="editor-score">
+      <span class="badge-a">A</span>
+      <b id="editScoreA">0</b><i>:</i><b id="editScoreB">0</b>
+      <span class="badge-b">B</span>
+    </div>
+
+    <div class="editor-teams">
+      <div>
+        <h4 class="editor-team-title team-a">Equipo A</h4>
+        <div id="editListA"></div>
+      </div>
+      <div>
+        <h4 class="editor-team-title team-b">Equipo B</h4>
+        <div id="editListB"></div>
+      </div>
+    </div>
+
+    <div class="editor-add">
+      <select id="editAddPlayer" aria-label="Jugador para añadir al acta"></select>
+      <button class="btn btn-outline btn-sm" id="btnAddA" type="button">+ Equipo A</button>
+      <button class="btn btn-outline btn-sm" id="btnAddB" type="button">+ Equipo B</button>
+    </div>
+
+    <div class="form-control">
+      <label for="editMvp">⭐ MVP del partido</label>
+      <select id="editMvp"></select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-outline" type="button" data-close="matchModal">Cancelar</button>
+      <button class="btn btn-primary" id="btnSaveEdits" type="button">Guardar cambios</button>
+    </div>
+  </div>
 </div>
 
-<script>
-    const API_URL = 'https://sheetdb.io/api/v1/bhahe403p8ubp';
+<!-- ===================== MODAL AJUSTES ===================== -->
+<div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="settingsTitle">⚙ Conexión y datos</h3>
+        <p class="hint">Todo se guarda en tu Google Sheets mediante SheetDB.</p>
+      </div>
+      <button class="icon-btn" type="button" data-close="settingsModal" aria-label="Cerrar">✕</button>
+    </div>
 
-    let players = [];
-    let selectedIds = new Set();
-    let currentTeamA = [];
-    let currentTeamB = [];
-    let matchGoals = {};
-    let matchMvpId = null;
-    let matchSaved = false;
+    <div class="form-control">
+      <label for="setPlayersApi">API de la plantilla (SheetDB)</label>
+      <input type="url" id="setPlayersApi" placeholder="https://sheetdb.io/api/v1/…">
+    </div>
+    <div class="form-control">
+      <label for="setMatchesSheet">Pestaña de actas en el mismo documento</label>
+      <input type="text" id="setMatchesSheet" placeholder="Partidos" autocomplete="off">
+      <p class="hint small">Usa tu misma API añadiendo <code>?sheet=Partidos</code>. Déjalo vacío para guardar el historial solo en este dispositivo.</p>
+      <p class="hint small" id="setMatchesPreview"></p>
+    </div>
 
-    let editingPlayerId = null;
-    let compressedPhotoBase64 = '';
+    <details class="details-box">
+      <summary>Qué debe tener la pestaña Partidos (1 minuto)</summary>
+      <ol>
+        <li>En el mismo Google Sheets crea una pestaña llamada <b>Partidos</b> (si aún no existe).</li>
+        <li>En la fila 1 escribe exactamente: <code>id</code>, <code>jornada</code>, <code>fecha</code>, <code>data</code>.</li>
+        <li>No hace falta crear otra API: <b>no</b> toques la URL de la plantilla. La app usa la misma URL con <code>?sheet=Partidos</code>.</li>
+      </ol>
+      <p class="hint small">Cada acta se guarda como un JSON en la columna <code>data</code>. No edites esa columna a mano; usa el botón ✏️ del historial.</p>
+    </details>
 
-    window.addEventListener('DOMContentLoaded', fetchPlayers);
+    <details class="details-box">
+      <summary>Avanzado: API de actas independiente</summary>
+      <div class="form-control">
+        <label for="setMatchesApi">URL propia para el historial (opcional)</label>
+        <input type="url" id="setMatchesApi" placeholder="https://sheetdb.io/api/v1/…">
+        <p class="hint small">Solo si publicaste el historial como una API aparte. Si está vacío, se usa la pestaña de arriba con la misma API.</p>
+      </div>
+    </details>
 
-    function switchTab(tab) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    <div class="modal-actions split">
+      <button class="btn btn-outline" type="button" onclick="exportBackup()">⬇ Copia de seguridad</button>
+      <div>
+        <button class="btn btn-outline" type="button" data-close="settingsModal">Cerrar</button>
+        <button class="btn btn-primary" id="btnSaveSettings" type="button">Guardar conexión</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-        if (tab === 'bolsa') {
-            document.getElementById('sec-bolsa').classList.add('active');
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        } else if (tab === 'partido') {
-            document.getElementById('sec-partido').classList.add('active');
-            document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        } else if (tab === 'ranking') {
-            renderRanking();
-            document.getElementById('sec-ranking').classList.add('active');
-            document.querySelectorAll('.tab-btn')[2].classList.add('active');
-        }
-    }
+<!-- ===================== CONFIRMAR ===================== -->
+<div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="modal modal-sm">
+    <h3 id="confirmTitle">¿Confirmar acción?</h3>
+    <p class="confirm-text" id="confirmMessage"></p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="confirmCancel" type="button">Cancelar</button>
+      <button class="btn btn-primary" id="confirmOk" type="button">Confirmar</button>
+    </div>
+  </div>
+</div>
 
-    function getAvatar(player) {
-        if (player.foto && player.foto.trim() !== '') return player.foto;
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(player.nombre || 'J')}&background=166534&color=facc15&bold=true`;
-    }
+<div id="toasts" class="toasts" aria-live="polite"></div>
 
-    function calculateOverall(p) {
-        const pac = Number(p.pac || 60);
-        const sho = Number(p.sho || 60);
-        const pas = Number(p.pas || 60);
-        const dri = Number(p.dri || 60);
-        const def = Number(p.def || 60);
-        const phy = Number(p.phy || 60);
-        return Math.round((pac + sho + pas + dri + def + phy) / 6);
-    }
-
-    function buildPlayerPayload(p) {
-        return {
-            id: String(p.id),
-            nombre: String(p.nombre),
-            posicion: String(p.posicion || 'MED'),
-            pac: Number(p.pac || 60),
-            sho: Number(p.sho || 65),
-            pas: Number(p.pas || 70),
-            dri: Number(p.dri || 65),
-            def: Number(p.def || 65),
-            phy: Number(p.phy || 70),
-            foto: p.foto || '',
-            goles: Number(p.goles || 0),
-            mvp: Number(p.mvp || 0),
-            partidos: Number(p.partidos || 0)
-        };
-    }
-
-    // CARGAR JUGADORES CON CACHÉ LOCAL (Ahorro del 90% de peticiones a SheetDB)
-    async function fetchPlayers(forceRefresh = false) {
-        const loading = document.getElementById('loadingState');
-        
-        // Comprobar si tenemos caché local guardada
-        if (!forceRefresh) {
-            const cachedData = localStorage.getItem('jb_players_cache');
-            if (cachedData) {
-                try {
-                    players = JSON.parse(cachedData);
-                    loading.style.display = 'none';
-                    renderPlayers();
-                    // Sincronizar en segundo plano sin bloquear la pantalla
-                    backgroundSync();
-                    return;
-                } catch (e) {
-                    console.error("Error leyendo caché", e);
-                }
-            }
-        }
-
-        loading.style.display = 'block';
-        try {
-            const res = await fetch(API_URL);
-            const data = await res.json();
-
-            players = (Array.isArray(data) ? data : [])
-                .filter(p => p.id && (p.nombre || p.name) && String(p.nombre || p.name).trim() !== '')
-                .map((p) => ({
-                    id: String(p.id),
-                    nombre: String(p.nombre || p.name).trim(),
-                    posicion: String(p.posicion || p.position || 'MED').toUpperCase(),
-                    pac: Number(p.pac || 60),
-                    sho: Number(p.sho || 65),
-                    pas: Number(p.pas || 70),
-                    dri: Number(p.dri || 65),
-                    def: Number(p.def || 65),
-                    phy: Number(p.phy || 70),
-                    foto: p.foto || '',
-                    goles: Number(p.goles || 0),
-                    mvp: Number(p.mvp || 0),
-                    partidos: Number(p.partidos || 0)
-                }));
-
-            // Guardar en caché local
-            localStorage.setItem('jb_players_cache', JSON.stringify(players));
-            loading.style.display = 'none';
-            renderPlayers();
-        } catch (err) {
-            loading.innerHTML = '❌ Error al conectar con Google Sheets.';
-            console.error(err);
-        }
-    }
-
-    async function backgroundSync() {
-        try {
-            const res = await fetch(API_URL);
-            const data = await res.json();
-            if (Array.isArray(data)) {
-                players = data
-                    .filter(p => p.id && (p.nombre || p.name) && String(p.nombre || p.name).trim() !== '')
-                    .map((p) => ({
-                        id: String(p.id),
-                        nombre: String(p.nombre || p.name).trim(),
-                        posicion: String(p.posicion || p.position || 'MED').toUpperCase(),
-                        pac: Number(p.pac || 60),
-                        sho: Number(p.sho || 65),
-                        pas: Number(p.pas || 70),
-                        dri: Number(p.dri || 65),
-                        def: Number(p.def || 65),
-                        phy: Number(p.phy || 70),
-                        foto: p.foto || '',
-                        goles: Number(p.goles || 0),
-                        mvp: Number(p.mvp || 0),
-                        partidos: Number(p.partidos || 0)
-                    }));
-                localStorage.setItem('jb_players_cache', JSON.stringify(players));
-                renderPlayers();
-            }
-        } catch(e) {
-            // Silencioso si falla la red en segundo plano
-        }
-    }
-
-    function updateCacheAndUI() {
-        localStorage.setItem('jb_players_cache', JSON.stringify(players));
-        renderPlayers();
-        if (currentTeamA.length > 0 || currentTeamB.length > 0) renderMatchTeams();
-        renderRanking();
-    }
-
-    function renderPlayers() {
-        const grid = document.getElementById('playersGrid');
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        const posFilter = document.getElementById('filterPos').value;
-
-        grid.innerHTML = '';
-        const filtered = players.filter(p => {
-            return p.nombre.toLowerCase().includes(search) && (posFilter === 'ALL' || p.posicion === posFilter);
-        });
-
-        filtered.forEach(p => {
-            const isSelected = selectedIds.has(p.id);
-            const ovr = calculateOverall(p);
-
-            const card = document.createElement('div');
-            card.className = `player-card ${isSelected ? 'selected' : ''}`;
-            card.onclick = (e) => {
-                if (e.target.closest('.card-action-btn')) return;
-                togglePlayerSelection(p.id);
-            };
-
-            card.innerHTML = `
-                <div class="check-indicator">✓</div>
-                <div class="card-top">
-                    <div class="rating-badge">${ovr}</div>
-                    <span class="pos-badge pos-${p.posicion}">${p.posicion}</span>
-                </div>
-                <div class="avatar-wrapper">
-                    <img src="${getAvatar(p)}" alt="${p.nombre}">
-                </div>
-                <div class="player-name" title="${p.nombre}">${p.nombre}</div>
-                
-                <div class="fifa-stats-grid">
-                    <div class="fifa-stat-item">PAC <span>${p.pac}</span></div>
-                    <div class="fifa-stat-item">SHO <span>${p.sho}</span></div>
-                    <div class="fifa-stat-item">PAS <span>${p.pas}</span></div>
-                    <div class="fifa-stat-item">DRI <span>${p.dri}</span></div>
-                    <div class="fifa-stat-item">DEF <span>${p.def}</span></div>
-                    <div class="fifa-stat-item">PHY <span>${p.phy}</span></div>
-                </div>
-
-                <div class="player-mini-stats">
-                    <div><strong>${p.goles}</strong>Goles</div>
-                    <div><strong>${p.mvp}</strong>MVPs</div>
-                    <div><strong>${p.partidos}</strong>PJ</div>
-                </div>
-                <div class="card-footer-actions">
-                    <button class="card-action-btn edit" onclick="openEditModal('${p.id}')">✏️ Editar</button>
-                    <button class="card-action-btn delete" onclick="deletePlayer('${p.id}')">🗑️</button>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-        document.getElementById('selectedCount').innerText = selectedIds.size;
-    }
-
-    function togglePlayerSelection(id) {
-        if (selectedIds.has(id)) selectedIds.delete(id);
-        else selectedIds.add(id);
-        renderPlayers();
-    }
-
-    function toggleSelectAll() {
-        if (selectedIds.size === players.length) selectedIds.clear();
-        else players.forEach(p => selectedIds.add(p.id));
-        renderPlayers();
-    }
-
-    function handlePhotoUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                canvas.width = 90; canvas.height = 90;
-                const ctx = canvas.getContext('2d');
-                const minSide = Math.min(img.width, img.height);
-                ctx.drawImage(img, (img.width - minSide)/2, (img.height - minSide)/2, minSide, minSide, 0, 0, 90, 90);
-                compressedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
-                document.getElementById('photoPreviewBox').style.display = 'flex';
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function clearPhoto() {
-        compressedPhotoBase64 = '';
-        document.getElementById('newPlayerPhoto').value = '';
-        document.getElementById('photoPreviewBox').style.display = 'none';
-    }
-
-    function openCreateModal() {
-        editingPlayerId = null;
-        document.getElementById('modalTitle').innerText = '➕ Fichar Veterano FUT';
-        document.getElementById('newPlayerName').value = '';
-        document.getElementById('newPlayerPos').value = 'MED';
-        document.getElementById('attrPac').value = '60';
-        document.getElementById('attrSho').value = '65';
-        document.getElementById('attrPas').value = '70';
-        document.getElementById('attrDri').value = '65';
-        document.getElementById('attrDef').value = '65';
-        document.getElementById('attrPhy').value = '70';
-        document.getElementById('newPlayerPhoto').value = '';
-        document.getElementById('photoPreviewBox').style.display = 'none';
-        compressedPhotoBase64 = '';
-        document.getElementById('playerModal').classList.add('open');
-    }
-
-    function openEditModal(id) {
-        const player = players.find(p => p.id === id);
-        if (!player) return;
-        editingPlayerId = id;
-        document.getElementById('modalTitle').innerText = `✏️ Editar a ${player.nombre}`;
-        document.getElementById('newPlayerName').value = player.nombre;
-        document.getElementById('newPlayerPos').value = player.posicion || 'MED';
-        document.getElementById('attrPac').value = player.pac || 60;
-        document.getElementById('attrSho').value = player.sho || 65;
-        document.getElementById('attrPas').value = player.pas || 70;
-        document.getElementById('attrDri').value = player.dri || 65;
-        document.getElementById('attrDef').value = player.def || 65;
-        document.getElementById('attrPhy').value = player.phy || 70;
-        document.getElementById('newPlayerPhoto').value = '';
-        compressedPhotoBase64 = player.foto || '';
-        if (compressedPhotoBase64) {
-            document.getElementById('photoPreviewImg').src = compressedPhotoBase64;
-            document.getElementById('photoPreviewBox').style.display = 'flex';
-        } else {
-            document.getElementById('photoPreviewBox').style.display = 'none';
-        }
-        document.getElementById('playerModal').classList.add('open');
-    }
-
-    function closeModal() {
-        document.getElementById('playerModal').classList.remove('open');
-    }
-
-    async function savePlayerForm() {
-        const nameInput = document.getElementById('newPlayerName');
-        const posInput = document.getElementById('newPlayerPos');
-        const btn = document.getElementById('savePlayerBtn');
-
-        const nombre = nameInput.value.trim();
-        const posicion = posInput.value;
-        const pac = Number(document.getElementById('attrPac').value) || 60;
-        const sho = Number(document.getElementById('attrSho').value) || 65;
-        const pas = Number(document.getElementById('attrPas').value) || 70;
-        const dri = Number(document.getElementById('attrDri').value) || 65;
-        const def = Number(document.getElementById('attrDef').value) || 65;
-        const phy = Number(document.getElementById('attrPhy').value) || 70;
-
-        if (!nombre) {
-            alert('Introduce un nombre válido.');
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = 'Guardando en la nube...';
-
-        try {
-            if (editingPlayerId) {
-                const player = players.find(p => p.id === editingPlayerId);
-                player.nombre = nombre;
-                player.posicion = posicion;
-                player.pac = pac; player.sho = sho; player.pas = pas;
-                player.dri = dri; player.def = def; player.phy = phy;
-                player.foto = compressedPhotoBase64 || player.foto;
-
-                await fetch(`${API_URL}/id/${encodeURIComponent(editingPlayerId)}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: buildPlayerPayload(player) })
-                });
-            } else {
-                const newPlayer = {
-                    id: String(Date.now()),
-                    nombre: nombre,
-                    posicion: posicion,
-                    pac: pac, sho: sho, pas: pas,
-                    dri: dri, def: def, phy: phy,
-                    foto: compressedPhotoBase64 || '',
-                    goles: 0,
-                    mvp: 0,
-                    partidos: 0
-                };
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [buildPlayerPayload(newPlayer)] })
-                });
-                players.push(newPlayer);
-                selectedIds.add(newPlayer.id);
-            }
-
-            updateCacheAndUI();
-            closeModal();
-        } catch (err) {
-            alert('Error al guardar en Google Sheets.');
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = 'Guardar en la Nube';
-        }
-    }
-
-    async function deletePlayer(id) {
-        const player = players.find(p => p.id === id);
-        if (!player || !confirm(`¿Eliminar a ${player.nombre}?`)) return;
-        try {
-            await fetch(`${API_URL}/id/${encodeURIComponent(id)}`, { method: 'DELETE' });
-            players = players.filter(p => p.id !== id);
-            selectedIds.delete(id);
-            updateCacheAndUI();
-        } catch (err) {
-            alert('No se pudo eliminar.');
-        }
-    }
-
-    function generateBalancedTeams(allowVariation = false) {
-        const convocated = players.filter(p => selectedIds.has(p.id));
-        if (convocated.length < 2) {
-            alert('Selecciona al menos 2 veteranos convocados.');
-            return;
-        }
-
-        const posOrder = { 'POR': 1, 'DEF': 2, 'MED': 3, 'DEL': 4 };
-        const sorted = [...convocated].sort((a, b) => {
-            if (posOrder[a.posicion] !== posOrder[b.posicion]) return posOrder[a.posicion] - posOrder[b.posicion];
-            const ovrA = calculateOverall(a);
-            const ovrB = calculateOverall(b);
-            const noise = allowVariation ? (Math.random() - 0.5) * 2 : 0;
-            return (ovrB + noise) - ovrA;
-        });
-
-        currentTeamA = []; currentTeamB = [];
-        let sumA = 0, sumB = 0;
-
-        sorted.forEach(player => {
-            const ovr = calculateOverall(player);
-            if (currentTeamA.length < currentTeamB.length) { currentTeamA.push(player); sumA += ovr; }
-            else if (currentTeamB.length < currentTeamA.length) { currentTeamB.push(player); sumB += ovr; }
-            else {
-                if (sumA <= sumB) { currentTeamA.push(player); sumA += ovr; }
-                else { currentTeamB.push(player); sumB += ovr; }
-            }
-        });
-
-        matchGoals = {};
-        convocated.forEach(p => { matchGoals[p.id] = 0; });
-        matchMvpId = null;
-        matchSaved = false;
-
-        document.getElementById('btnRecordMatch').disabled = false;
-        document.getElementById('btnRecordMatch').innerText = '🏁 Finalizar y Guardar Acta';
-
-        renderMatchTeams();
-        switchTab('partido');
-    }
-
-    function shuffleAgain() { generateBalancedTeams(true); }
-
-    function changeMatchGoal(playerId, delta) {
-        if (matchSaved) return;
-        matchGoals[playerId] = Math.max(0, (matchGoals[playerId] || 0) + delta);
-        renderMatchTeams();
-    }
-
-    function toggleMatchMvp(playerId) {
-        if (matchSaved) return;
-        matchMvpId = (matchMvpId === playerId) ? null : playerId;
-        renderMatchTeams();
-    }
-
-    function renderMatchTeams() {
-        document.getElementById('emptyMatchMsg').style.display = 'none';
-        document.getElementById('matchActiveContent').style.display = 'block';
-
-        const sumA = currentTeamA.reduce((acc, p) => acc + calculateOverall(p), 0);
-        const sumB = currentTeamB.reduce((acc, p) => acc + calculateOverall(p), 0);
-
-        document.getElementById('sumTeamA').innerText = sumA;
-        document.getElementById('sumTeamB').innerText = sumB;
-        document.getElementById('avgTeamA').innerText = (sumA / (currentTeamA.length || 1)).toFixed(1);
-        document.getElementById('avgTeamB').innerText = (sumB / (currentTeamB.length || 1)).toFixed(1);
-
-        document.getElementById('scoreGoalsA').innerText = currentTeamA.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
-        document.getElementById('scoreGoalsB').innerText = currentTeamB.reduce((acc, p) => acc + (matchGoals[p.id] || 0), 0);
-
-        const renderList = (team, containerId) => {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            team.forEach(p => {
-                const ovr = calculateOverall(p);
-                const row = document.createElement('div');
-                row.className = 'team-player-row';
-                row.innerHTML = `
-                    <div class="team-player-info">
-                        <img src="${getAvatar(p)}" alt="${p.nombre}">
-                        <div style="min-width:0;">
-                            <strong style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.nombre}</strong>
-                            <div style="font-size: 0.75rem; color: var(--muted);">
-                                <span class="pos-badge pos-${p.posicion}" style="padding:1px 5px; font-size:0.65rem;">${p.posicion}</span> OVR ${ovr}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="post-match-actions">
-                        <div class="goal-control">
-                            <button onclick="changeMatchGoal('${p.id}', -1)">-</button>
-                            <span>⚽ ${matchGoals[p.id] || 0}</span>
-                            <button onclick="changeMatchGoal('${p.id}', 1)">+</button>
-                        </div>
-                        <button class="mvp-btn ${matchMvpId === p.id ? 'active' : ''}" onclick="toggleMatchMvp('${p.id}')">⭐ MVP</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
-        };
-        renderList(currentTeamA, 'listTeamA');
-        renderList(currentTeamB, 'listTeamB');
-    }
-
-    async function finishAndSaveMatch() {
-        const convocated = [...currentTeamA, ...currentTeamB];
-        if (convocated.length === 0 || matchSaved) return;
-        if (!confirm('¿Guardar acta del partido y actualizar estadísticas de los veteranos?')) return;
-
-        const btn = document.getElementById('btnRecordMatch');
-        btn.disabled = true;
-
-        try {
-            for (let i = 0; i < convocated.length; i++) {
-                const p = convocated[i];
-                p.partidos += 1;
-                p.goles += (matchGoals[p.id] || 0);
-                if (matchMvpId === p.id) p.mvp += 1;
-
-                btn.innerText = `⏳ Guardando (${i + 1}/${convocated.length})...`;
-                await fetch(`${API_URL}/id/${encodeURIComponent(p.id)}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: buildPlayerPayload(p) })
-                });
-            }
-
-            matchSaved = true;
-            btn.innerText = '✅ Acta Guardada';
-            updateCacheAndUI();
-            alert('🏆 ¡Acta guardada correctamente!');
-        } catch (err) {
-            alert('Error guardando el acta.');
-            btn.disabled = false;
-            btn.innerText = '🏁 Finalizar y Guardar Acta';
-        }
-    }
-
-    function copyToWhatsApp() {
-        if (currentTeamA.length === 0) return;
-        let text = `⚽ *JOGO BONITO WALKING F.C.* ⚽\n*Convocatoria Ultimate Team*\n\n`;
-        text += `🔴 *Equipo A (Media: ${document.getElementById('avgTeamA').innerText})*\n`;
-        currentTeamA.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (OVR ${calculateOverall(p)})\n`; });
-        text += `\n🔵 *Equipo B (Media: ${document.getElementById('avgTeamB').innerText})*\n`;
-        currentTeamB.forEach(p => { text += `• [${p.posicion}] ${p.nombre} (OVR ${calculateOverall(p)})\n`; });
-
-        navigator.clipboard.writeText(text).then(() => alert('📲 ¡Copiado para WhatsApp!'));
-    }
-
-    function renderRanking() {
-        const tbody = document.getElementById('rankingBody');
-        tbody.innerHTML = '';
-        const sorted = [...players].sort((a, b) => b.goles - a.goles || b.mvp - a.mvp);
-
-        sorted.forEach((p, index) => {
-            const ovr = calculateOverall(p);
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>#${index + 1}</strong></td>
-                <td><div class="stats-player-cell"><img src="${getAvatar(p)}" alt="${p.nombre}"><span>${p.nombre}</span></div></td>
-                <td><span class="pos-badge pos-${p.posicion}">${p.posicion}</span></td>
-                <td><strong>${ovr}</strong></td>
-                <td>⚽ ${p.goles}</td>
-                <td>⭐ ${p.mvp}</td>
-                <td>👟 ${p.partidos}</td>
-                <td><button class="card-action-btn edit" style="padding:4px 10px;" onclick="openEditModal('${p.id}')">✏️ Editar</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
